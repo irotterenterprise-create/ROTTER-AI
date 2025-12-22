@@ -4,7 +4,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROTTER AI</title>
+    <title>IRO AI</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -120,7 +120,7 @@
     <!-- SIDEBAR -->
     <div id="sidebar" class="hidden md:flex flex-col h-full border-r border-gray-200 shrink-0 sidebar-transition relative z-40 bg-white w-[255px] absolute md:static shadow-2xl md:shadow-none">
         <div id="sidebar-header" class="flex items-center h-14 px-4 justify-between shrink-0 transition-all duration-300">
-            <div id="logo-container" class="flex items-center gap-2 animate-fade-in"><span class="font-sans font-bold text-sm tracking-tight text-black">ROTTER AI</span></div>
+            <div id="logo-container" class="flex items-center gap-2 animate-fade-in"><span class="font-sans font-bold text-sm tracking-tight text-black">IRO AI</span></div>
             <button id="btn-collapse" class="p-1.5 rounded-lg text-black hover:bg-gray-200 transition-colors"><i data-lucide="panel-left-close" width="16" height="16" stroke-width="1.2"></i></button>
         </div>
         <div id="collapsed-header" class="hidden h-14 w-full items-center justify-center">
@@ -168,9 +168,9 @@
                 <div class="flex items-center gap-3">
                     <button id="btn-mobile-sidebar" class="md:hidden p-2 mr-1 text-black hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center border border-gray-200 shadow-sm active:scale-95"><i data-lucide="panel-left" width="18" height="18"></i></button>
                     <div class="relative">
-                        <button id="btn-model-menu" class="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-black hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors"><span id="selected-model-name">ROTTER v.9</span><i data-lucide="chevron-down" width="14" height="14"></i></button>
+                        <button id="btn-model-menu" class="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-black hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors"><span id="selected-model-name">IRO v.9</span><i data-lucide="chevron-down" width="14" height="14"></i></button>
                         <div id="model-menu" class="hidden absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-1 animate-zoom-in">
-                            <button onclick="selectModel('ROTTER v.9')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-100 transition-colors bg-black text-white">ROTTER v.9</button>
+                            <button onclick="selectModel('IRO v.9')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-100 transition-colors bg-black text-white">IRO v.9</button>
                             <button onclick="selectModel('GPT-5.2')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center justify-between hover:bg-gray-100 transition-colors group text-black">GPT-5.2 <i data-lucide="lock" width="12" class="text-gray-400 group-hover:text-black"></i></button>
                             <button onclick="selectModel('Gemini 3')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center justify-between hover:bg-gray-100 transition-colors group text-black"><span class="flex items-center gap-2">Gemini 3 <span class="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">NUEVO</span></span> <i data-lucide="lock" width="12" class="text-gray-400 group-hover:text-black"></i></button>
                         </div>
@@ -213,7 +213,7 @@
                 <div class="w-full max-w-2xl mb-4 animate-slide-up flex items-center justify-center gap-3">
                     <!-- Placeholder de Logo -->
                    <img src="logo-negro.png" alt="Logo Rotter AI" class="w-10 h-10 object-contain shrink-0"> 
-                    <h1 class="font-inter font-bold text-[25.6px] text-black tracking-tight">ROTTER AI</h1>
+                    <h1 class="font-inter font-bold text-[25.6px] text-black tracking-tight">IRO AI</h1>
                 </div>
 
                 <!-- Barra de Chat Especial (Tools) - UPDATED LAYOUT -->
@@ -312,7 +312,7 @@
 
     <script>
         const state = {
-            isSidebarCollapsed: false, isModelMenuOpen: false, isExtrasOpen: false, isPlusMenuOpen: false, isHistoryOpen: false, isHistoryExpanded: false, messages: [], currentModel: 'ROTTER v.9', pendingFile: null,
+            isSidebarCollapsed: false, isModelMenuOpen: false, isExtrasOpen: false, isPlusMenuOpen: false, isHistoryOpen: false, isHistoryExpanded: false, messages: [], currentModel: 'IRO v.9', pendingFile: null,
             currentView: 'standard', // 'standard' | 'tools'
             isAgentsMenuOpen: false, isToolsAttachOpen: false
         };
