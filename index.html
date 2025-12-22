@@ -123,9 +123,13 @@
             <div id="logo-container" class="flex items-center gap-2 animate-fade-in"><span class="font-sans font-bold text-sm tracking-tight text-black">ROTTER AI</span></div>
             <button id="btn-collapse" class="p-1.5 rounded-lg text-black hover:bg-gray-200 transition-colors"><i data-lucide="panel-left-close" width="16" height="16" stroke-width="1.2"></i></button>
         </div>
-        <div id="collapsed-header" class="hidden h-14 w-full items-center justify-center">
-            <button id="btn-expand" class="group relative w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-300 shadow-sm"><span class="font-sans font-bold text-lg text-black group-hover:opacity-0 transition-opacity duration-200 absolute">R</span><i data-lucide="panel-left-open" width="16" height="16" stroke-width="1.5" class="text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute"></i></button>
-        </div>
+        <button id="btn-expand" class="group relative w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300">
+    
+    <img src="logo-negro.png" alt="Logo" class="w-7 h-7 object-contain transition-opacity duration-200 group-hover:opacity-0 absolute">
+
+    <i data-lucide="panel-left-open" width="16" height="16" stroke-width="1.5" class="text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute"></i>
+
+</button>        </div>
         
         <!-- Opciones Principales -->
         <div class="flex flex-col gap-1 px-3 mt-2 flex-1 overflow-y-auto sidebar-scrollbar" id="sidebar-options"></div>
