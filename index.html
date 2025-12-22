@@ -72,6 +72,8 @@
     <input type="file" id="file-input-generic" class="hidden" multiple>
     <input type="file" id="file-input-image" class="hidden" accept="image/*" multiple>
     <input type="file" id="file-input-video" class="hidden" accept="video/*" multiple>
+    <!-- Input especial para cargar galería "reciente" -->
+    <input type="file" id="file-input-gallery" class="hidden" accept="image/*,video/*" multiple>
 
     <!-- MOBILE OVERLAY (Sidebar) -->
     <div id="mobile-overlay" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden transition-opacity"></div>
@@ -80,7 +82,6 @@
     <div id="plus-menu-overlay" class="hidden fixed inset-0 bg-transparent z-[60] transition-opacity" onclick="closeAllMenusExcept(null)"></div>
 
     <!-- PANEL DE HERRAMIENTAS / ADJUNTOS (PC - FIXED) -->
-    <!-- Ajustes visuales: w-56, padding reducido -->
     <div id="plus-menu-desktop" class="hidden fixed w-56 bg-white border border-gray-200 rounded-2xl shadow-2xl animate-zoom-in z-[100] p-1.5">
         <button onclick="triggerFileSelect('generic')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-gray-50 flex items-center gap-3 text-[13px] font-medium text-black transition-colors group">
             <div class="bg-gray-100 p-1.5 rounded-lg group-hover:bg-white border border-transparent group-hover:border-gray-200"><i data-lucide="paperclip" width="11"></i></div> Adjuntar Archivos y Fotos
@@ -92,7 +93,8 @@
     </div>
 
     <!-- SIDEBAR -->
-    <div id="sidebar" class="hidden md:flex flex-col h-full border-r border-gray-200 shrink-0 sidebar-transition relative z-40 bg-white w-[260px] absolute md:static shadow-2xl md:shadow-none">
+    <!-- Updated width to 255px -->
+    <div id="sidebar" class="hidden md:flex flex-col h-full border-r border-gray-200 shrink-0 sidebar-transition relative z-40 bg-white w-[255px] absolute md:static shadow-2xl md:shadow-none">
         <!-- Cabecera Sidebar -->
         <div id="sidebar-header" class="flex items-center h-14 px-4 justify-between shrink-0 transition-all duration-300">
             <div id="logo-container" class="flex items-center gap-2 animate-fade-in">
@@ -159,27 +161,26 @@
             
             <!-- Contenedor BIENVENIDA -->
             <div id="welcome-screen" class="flex-1 flex flex-col items-center justify-center min-h-[50vh] transition-all duration-500 w-full">
-                <!-- Título -->
-                <div class="text-center mb-8 animate-slide-up">
+                <!-- Título (Movido hacia arriba en PC con translate-y) -->
+                <div class="text-center mb-8 animate-slide-up md:-translate-y-8">
                     <h1 id="greeting-text" class="font-inter text-[24px] font-light tracking-tight text-black">Hola, creador.</h1>
                 </div>
 
                 <!-- ZONA CONTENIDO CENTRAL (Dinámica por JS) -->
-                <!-- Aquí se inyectarán Input y QuickActions en el orden correcto según el dispositivo -->
-                <div id="center-content-spot" class="w-full max-w-3xl px-4 animate-slide-up flex flex-col items-center" style="animation-delay: 0.1s;">
+                <div id="center-content-spot" class="w-full max-w-4xl px-4 animate-slide-up flex flex-col items-center" style="animation-delay: 0.1s;">
                     <!-- JS handle this -->
                 </div>
             </div>
 
             <!-- Lista de Mensajes -->
-            <div id="messages-list" class="flex flex-col gap-8 pb-4 w-full max-w-3xl hidden"></div>
+            <div id="messages-list" class="flex flex-col gap-8 pb-4 w-full max-w-4xl hidden"></div>
             
             <!-- Loader -->
-            <div id="ai-loader" class="hidden w-full max-w-3xl pl-14 justify-start"><div class="flex gap-2 p-2"><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 0ms"></span><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 150ms"></span><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 300ms"></span></div></div>
+            <div id="ai-loader" class="hidden w-full max-w-4xl pl-14 justify-start"><div class="flex gap-2 p-2"><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 0ms"></span><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 150ms"></span><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 300ms"></span></div></div>
         </div>
         
         <!-- Bottom Bar (Messages Active) -->
-        <div id="bottom-bar-container" class="w-full shrink-0 pb-8 pt-4 px-4 bg-white z-20 hidden"><div id="bottom-input-spot" class="max-w-3xl mx-auto relative z-20"></div></div>
+        <div id="bottom-bar-container" class="w-full shrink-0 pb-8 pt-4 px-4 bg-white z-20 hidden"><div id="bottom-input-spot" class="max-w-4xl mx-auto relative z-20"></div></div>
 
         <!-- Historial View -->
         <div id="history-view" class="hidden absolute top-16 left-4 md:left-20 w-[400px] bg-white/95 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl flex-col p-4 z-40 transition-all duration-300 max-h-[600px]">
@@ -192,52 +193,70 @@
         </div>
 
         <!-- MAIN INPUT COMPONENT -->
-        <div id="main-input-wrapper" class="w-full relative">
+        <!-- Added mb-[25px] specifically for mobile. Added md:-translate-y-[17.5px] for PC lift. -->
+        <div id="main-input-wrapper" class="w-full relative mb-[25px] md:mb-0 md:-translate-y-[17.5px]">
             
             <!-- PANEL DE HERRAMIENTAS / ADJUNTOS (MOBILE - Bottom Sheet) -->
-            <div id="plus-menu-mobile" class="hidden md:hidden fixed bottom-0 left-0 w-full bg-white rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[70] animate-slide-up-panel flex flex-col max-h-[80vh]">
-                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-3 mb-4"></div> <!-- Handle -->
+            <div id="plus-menu-mobile" class="hidden md:hidden fixed bottom-0 left-0 w-full bg-white rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[70] animate-slide-up-panel flex flex-col max-h-[70vh]">
+                <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mt-3 mb-4"></div> <!-- Handle -->
                 <div class="px-5 pb-6 overflow-y-auto custom-scrollbar">
-                    <div class="flex gap-4 mb-6">
-                        <div class="flex gap-3 shrink-0">
-                            <button onclick="triggerFileSelect('generic')" class="flex flex-col items-center gap-2 group">
-                                <div class="w-16 h-16 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-center text-blue-600 group-active:scale-95 transition-transform"><i data-lucide="folder" width="24"></i></div>
-                                <span class="text-[11px] font-medium text-gray-600">Archivos</span>
+                    
+                    <!-- Sección de Adjuntos y Galería -->
+                    <div class="flex gap-4 mb-5">
+                        <!-- Botones adjuntar -->
+                        <div class="flex gap-2 shrink-0">
+                            <button onclick="triggerFileSelect('generic')" class="flex flex-col items-center gap-1.5 group p-1">
+                                <div class="w-12 h-12 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-blue-600 group-active:scale-95 transition-transform"><i data-lucide="folder" width="20"></i></div>
+                                <span class="text-[10px] font-medium text-gray-600">Archivos</span>
                             </button>
-                            <button onclick="triggerFileSelect('image')" class="flex flex-col items-center gap-2 group">
-                                <div class="w-16 h-16 bg-purple-50 border border-purple-100 rounded-2xl flex items-center justify-center text-purple-600 group-active:scale-95 transition-transform"><i data-lucide="image" width="24"></i></div>
-                                <span class="text-[11px] font-medium text-gray-600">Fotos</span>
+                            <button onclick="triggerFileSelect('image')" class="flex flex-col items-center gap-1.5 group p-1">
+                                <div class="w-12 h-12 bg-purple-50 border border-purple-100 rounded-xl flex items-center justify-center text-purple-600 group-active:scale-95 transition-transform"><i data-lucide="image" width="20"></i></div>
+                                <span class="text-[10px] font-medium text-gray-600">Fotos</span>
                             </button>
-                            <button onclick="triggerFileSelect('video')" class="flex flex-col items-center gap-2 group">
-                                <div class="w-16 h-16 bg-pink-50 border border-pink-100 rounded-2xl flex items-center justify-center text-pink-600 group-active:scale-95 transition-transform"><i data-lucide="clapperboard" width="24"></i></div>
-                                <span class="text-[11px] font-medium text-gray-600">Video</span>
+                            <button onclick="triggerFileSelect('video')" class="flex flex-col items-center gap-1.5 group p-1">
+                                <div class="w-12 h-12 bg-pink-50 border border-pink-100 rounded-xl flex items-center justify-center text-pink-600 group-active:scale-95 transition-transform"><i data-lucide="clapperboard" width="20"></i></div>
+                                <span class="text-[10px] font-medium text-gray-600">Video</span>
                             </button>
                         </div>
-                        <div class="w-px bg-gray-200 h-16 mx-1"></div>
-                        <div class="flex gap-2 overflow-x-auto hide-scrollbar flex-1 items-center h-20">
-                            <button class="w-16 h-16 rounded-xl bg-gray-100 shrink-0 border border-gray-200 overflow-hidden relative group" onclick="simulatePreview()"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&h=150&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"></button>
-                            <button class="w-16 h-16 rounded-xl bg-gray-100 shrink-0 border border-gray-200 overflow-hidden relative group" onclick="simulatePreview()"><img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=150&h=150&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"></button>
-                            <button class="w-16 h-16 rounded-xl bg-gray-100 shrink-0 border border-gray-200 overflow-hidden relative group" onclick="simulatePreview()"><img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=150&h=150&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"></button>
+                        
+                        <div class="w-px bg-gray-100 h-14 mx-1 my-auto"></div>
+                        
+                        <!-- Galería Real (Scroll) -->
+                        <div class="flex gap-2 overflow-x-auto hide-scrollbar flex-1 items-center h-16" id="mobile-gallery-scroll">
+                            <!-- Botón inicial para cargar galería -->
+                            <button onclick="triggerGalleryLoad()" class="w-12 h-12 rounded-xl bg-gray-100 shrink-0 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-colors" title="Cargar Galería">
+                                <i data-lucide="plus" width="20"></i>
+                            </button>
+                            <!-- Aquí se inyectarán las imágenes cargadas -->
                         </div>
                     </div>
-                    <div class="h-px bg-gray-100 w-full mb-5"></div>
-                    <div><h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Herramientas IA</h4><div class="grid grid-cols-4 gap-3" id="mobile-tools-grid"></div></div>
+
+                    <div class="h-px bg-gray-100 w-full mb-4"></div>
+                    
+                    <!-- Grid Herramientas -->
+                    <div>
+                        <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Herramientas IA</h4>
+                        <div class="grid grid-cols-4 gap-2" id="mobile-tools-grid"></div>
+                    </div>
                 </div>
             </div>
 
             <!-- CONTENEDOR INPUT -->
-            <div class="flex items-center gap-2 relative">
+            <!-- PC: md:items-center for aesthetics. Mobile: items-end usually better for multiline but kept consistent. -->
+            <div class="flex items-end md:items-center gap-2 relative">
                 
                 <!-- Botón PLUS -->
-                <button id="btn-plus" class="p-3 md:p-2 text-black md:text-gray-400 hover:text-black bg-gray-100 md:bg-transparent rounded-full hover:bg-gray-200 md:hover:bg-gray-100 transition-all shrink-0 md:absolute md:left-3 md:top-1/2 md:-translate-y-1/2 md:z-10 shadow-sm md:shadow-none">
-                    <i data-lucide="plus" width="24" height="24" class="md:w-5 md:h-5 transition-transform duration-200"></i>
+                <!-- PC: md:left-[24px] (+7px shift) -->
+                <button id="btn-plus" class="p-2.5 md:p-2 text-black md:text-gray-400 hover:text-black bg-gray-100 md:bg-transparent rounded-full hover:bg-gray-200 md:hover:bg-gray-100 transition-all shrink-0 md:absolute md:left-[24px] md:top-1/2 md:-translate-y-1/2 md:z-10 shadow-sm md:shadow-none">
+                    <i data-lucide="plus" width="20" height="20" class="md:w-5 md:h-5 transition-transform duration-200"></i>
                 </button>
 
                 <!-- Área de Texto y Enviar -->
-                <div id="input-container" class="flex-1 bg-gray-50 md:bg-white border border-gray-300 rounded-[2rem] md:rounded-3xl shadow-sm hover:shadow-md transition-all focus-within:shadow-lg focus-within:border-gray-400 p-2 pl-4 md:pl-10 relative flex items-end">
-                    <textarea id="chat-textarea" rows="1" placeholder="Comienza a charlar..." class="w-full bg-transparent border-none outline-none text-black placeholder-gray-400 resize-none font-light font-inter transition-all duration-300 custom-scrollbar text-lg leading-relaxed max-h-[150px] py-2 mb-0.5" style="min-height: 24px;"></textarea>
-                    <button id="btn-send" disabled class="p-2 ml-2 rounded-full bg-black text-white hover:bg-gray-900 disabled:bg-gray-200 disabled:text-gray-400 transition-all shadow-md active:scale-95 shrink-0 mb-0.5">
-                        <i data-lucide="arrow-up" width="20" height="20"></i>
+                <!-- PC: rounded-[2.5rem], padding-left increased to pl-16 -->
+                <div id="input-container" class="flex-1 bg-gray-50 md:bg-white border border-gray-300 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-md transition-all focus-within:shadow-lg focus-within:border-gray-400 p-1.5 pl-4 md:p-2 md:pl-16 relative flex items-end md:items-center">
+                    <textarea id="chat-textarea" rows="1" placeholder="Comienza a charlar..." class="w-full bg-transparent border-none outline-none text-black placeholder-gray-400 resize-none font-light font-inter transition-all duration-300 custom-scrollbar text-lg leading-relaxed max-h-[150px] py-1.5 md:py-2 mb-0.5" style="min-height: 24px;"></textarea>
+                    <button id="btn-send" disabled class="p-2 ml-1 rounded-full bg-black text-white hover:bg-gray-900 disabled:bg-gray-200 disabled:text-gray-400 transition-all shadow-md active:scale-95 shrink-0 mb-0.5 md:mb-0">
+                        <i data-lucide="arrow-up" width="18" height="18" class="md:w-5 md:h-5"></i>
                     </button>
                 </div>
             </div>
@@ -291,7 +310,8 @@
             isHistoryExpanded: false,
             messages: [],
             currentModel: 'ROTTER v.9',
-            pendingFile: null
+            pendingFile: null,
+            loadedGallery: []
         };
 
         // --- DATOS ---
@@ -350,7 +370,6 @@
 
                 document.getElementById('btn-send').disabled = this.value.trim() === "";
                 
-                // En modo mobile center, si escribes, quick actions se oculta igual por updateLayout state logic o css
                 const qa = document.getElementById('quick-actions');
                 if (this.value.trim().length > 0) qa.classList.add('hidden');
                 else if (state.messages.length === 0) qa.classList.remove('hidden');
@@ -360,15 +379,17 @@
                 if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
             });
 
+            // Listeners Archivos
             document.getElementById('file-input-generic').addEventListener('change', handleFileSelect);
             document.getElementById('file-input-image').addEventListener('change', handleFileSelect);
             document.getElementById('file-input-video').addEventListener('change', handleFileSelect);
+            document.getElementById('file-input-gallery').addEventListener('change', handleGalleryLoad); // Listener para galería
 
             setupButtons();
             
             window.addEventListener('resize', () => {
                 if(state.isPlusMenuOpen && window.innerWidth >= 768) updatePCMenuPosition();
-                if(state.messages.length === 0) updateLayout(); // Re-adjust layout if screen size changes
+                if(state.messages.length === 0) updateLayout(); 
             });
         });
 
@@ -446,6 +467,7 @@
             else if (exceptId === null) overlay.classList.add('hidden');
         }
 
+        // --- MANEJO DE ARCHIVOS Y GALERÍA ---
         function triggerFileSelect(type) {
             closePlusMenuMobile();
             document.getElementById('plus-menu-desktop').classList.add('hidden');
@@ -467,6 +489,40 @@
             e.target.value = '';
         }
 
+        // Lógica de "Cargar Galería" Real
+        function triggerGalleryLoad() {
+            document.getElementById('file-input-gallery').click();
+        }
+
+        function handleGalleryLoad(e) {
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+            
+            const container = document.getElementById('mobile-gallery-scroll');
+            // Remove previous thumbnails, keep the add button
+            // (Assuming add button is first child)
+            while(container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-12 h-12 rounded-xl bg-gray-100 shrink-0 border border-gray-200 overflow-hidden relative group";
+                    btn.onclick = () => { state.pendingFile = file; showPreview(file); };
+                    
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.className = "w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity";
+                    
+                    btn.appendChild(img);
+                    container.appendChild(btn);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         function showPreview(file) {
             const modal = document.getElementById('preview-modal');
             const imgEl = document.getElementById('preview-image');
@@ -481,16 +537,6 @@
                 imgEl.classList.add('hidden'); iconEl.classList.remove('hidden'); iconEl.classList.add('flex');
                 nameEl.innerText = file.name;
             }
-        }
-
-        function simulatePreview() {
-            const modal = document.getElementById('preview-modal');
-            const imgEl = document.getElementById('preview-image');
-            const iconEl = document.getElementById('preview-file-icon');
-            imgEl.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&fit=crop";
-            imgEl.classList.remove('hidden'); iconEl.classList.add('hidden');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
-            closePlusMenuMobile();
         }
 
         function closePreview() {
@@ -616,7 +662,8 @@
         function renderQuickActions() {
             const container = document.getElementById('quick-actions');
             container.innerHTML = quickActionsData.map(a => `
-                <button onclick="setInput('${a.text}')" class="group px-4 py-2 bg-white hover:bg-gray-50 text-black rounded-full transition-all cursor-pointer flex items-center gap-2 text-xs font-medium border border-gray-200 shadow-sm hover:shadow-md">
+                <!-- Updated classes for PC size -->
+                <button onclick="setInput('${a.text}')" class="group px-4 py-2 md:px-5 md:py-3 md:text-sm bg-white hover:bg-gray-50 text-black rounded-full transition-all cursor-pointer flex items-center gap-2 text-xs font-medium border border-gray-200 shadow-sm hover:shadow-md">
                     <i data-lucide="${a.icon}" width="14" height="14" class="text-gray-500 group-hover:text-black"></i>
                     <span>${a.text}</span>
                 </button>
@@ -674,12 +721,12 @@
             const items = document.querySelectorAll('.sidebar-item');
 
             if (collapsed) {
-                sidebar.classList.remove('w-[260px]'); sidebar.classList.add('w-[70px]');
+                sidebar.classList.remove('w-[255px]'); sidebar.classList.add('w-[70px]');
                 header.classList.add('hidden'); collapsedHeader.classList.remove('hidden'); collapsedHeader.classList.add('flex');
                 labels.forEach(l => l.classList.add('hidden'));
                 items.forEach(i => { i.classList.add('justify-center'); i.classList.remove('px-3'); });
             } else {
-                sidebar.classList.add('w-[260px]'); sidebar.classList.remove('w-[70px]');
+                sidebar.classList.add('w-[255px]'); sidebar.classList.remove('w-[70px]');
                 header.classList.remove('hidden'); collapsedHeader.classList.add('hidden'); collapsedHeader.classList.remove('flex');
                 labels.forEach(l => l.classList.remove('hidden'));
                 items.forEach(i => { i.classList.remove('justify-center'); i.classList.add('px-3'); });
