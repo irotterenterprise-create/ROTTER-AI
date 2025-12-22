@@ -14,36 +14,50 @@
       "imports": {
         "react": "https://esm.sh/react@18.2.0",
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+        "lucide-react": "https://esm.sh/lucide-react@latest"
       }
     }
     </script>
 
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #ffffff; }
-        #error-box { display: none; background: #fee2e2; color: #991b1b; padding: 20px; font-family: monospace; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; }
+        /* Estilo para mostrar errores reales si algo falla */
+        #debug-console { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #fff0f0; color: #d8000c; padding: 20px; z-index: 99999; 
+            overflow: auto; font-family: monospace; white-space: pre-wrap;
+        }
     </style>
 </head>
 <body>
-    <div id="error-box"></div>
-    
+    <div id="debug-console"></div>
     <div id="root" style="height: 100vh; width: 100vw;"></div>
 
     <script>
-        // Detector de errores (Para que no salga pantalla blanca)
-        window.onerror = function(message, source, lineno, colno, error) {
-            const box = document.getElementById('error-box');
-            box.style.display = 'block';
-            box.innerHTML = `<strong⚠️ Ocurrió un error:</strong><br>${message}<br><small>${source}:${lineno}</small>`;
+        window.onerror = function(msg, url, line, col, error) {
+            var console = document.getElementById('debug-console');
+            console.style.display = 'block';
+            console.innerHTML += "🔴 ERROR CRÍTICO:\n" + msg + "\n\nEn línea: " + line + "\nVerifica que no tengas AdBlock bloqueando scripts.\n\n";
+            return false;
         };
+        // Capturar errores de promesas (común en imports)
+        window.addEventListener('unhandledrejection', function(event) {
+            var console = document.getElementById('debug-console');
+            console.style.display = 'block';
+            console.innerHTML += "🟠 ERROR DE CARGA (Promesa):\n" + event.reason + "\n\n";
+        });
     </script>
 
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect, useRef } from 'react';
         import { createRoot } from 'react-dom/client';
-        import { 
+        // Importamos todo Lucide para evitar errores si falta un icono específico
+        import * as LucideIcons from 'lucide-react';
+
+        // Desempaquetamos los iconos que usas (Si falta alguno, no romperá la web)
+        const { 
           Plus, ArrowUp, ChevronDown, Check, X, Lock, 
-          FileText, Image as ImageIcon, Link as LinkIcon, 
+          FileText, Image: ImageIcon, Link: LinkIcon, // Renombramos Image y Link para evitar choques
           Sparkles, AlignLeft, FilePlus, Presentation, UserCheck, Code2,
           Paperclip, LayoutGrid, User, AlertTriangle,
           Plane, Terminal, ChevronLeft, ChevronRight, Edit3, MonitorPlay,
@@ -53,9 +67,11 @@
           RotateCcw, RotateCw, Copy, Save, CheckCircle, GripVertical, MessageSquare, LayoutTemplate, ExternalLink,
           RefreshCw, ThumbsUp, ThumbsDown, Clipboard, Zap,
           Maximize, Minimize, CreditCard, Loader2, Brain, Activity, Search, Hammer, Lightbulb, Play, Download,
-          Folder, Bot, Settings, PanelLeftClose, PanelLeftOpen, Archive, History, Clock, Layers 
-        } from 'lucide-react';
+          Folder, Bot, Settings, PanelLeftClose, PanelLeftOpen, Archive, History, Clock, Layers
+        } = LucideIcons;
 
+        // --- TU LÓGICA COMIENZA AQUÍ ---
+        
         // --- UTILIDADES ---
         const MarkdownLite = ({ content, themeClass = "" }) => {
           if (!content) return null;
@@ -96,7 +112,7 @@
           return html.split('\n').map(line => (line.match(/<h|<ul|<li/) ? line : line.trim() ? `<div>${line}</div>` : '<br>')).join('');
         };
 
-        // --- MENU EXTRAS (NUEVO) ---
+        // --- MENU EXTRAS ---
         const ExtrasMenu = ({ isOpen, onClose }) => {
           if (!isOpen) return null;
           const tools = [
@@ -123,34 +139,38 @@
                 <div className="mb-4">
                   <h3 className="px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Herramientas</h3>
                   <div className="space-y-0.5">
-                    {tools.map((item, idx) => (
+                    {tools.map((item, idx) => {
+                      const Icon = item.icon || Sparkles; 
+                      return (
                       <button key={idx} className="w-full flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group text-left">
                         <div className="mt-0.5 text-gray-400 group-hover:text-black transition-colors">
-                          <item.icon size={16} strokeWidth={1.5} />
+                          <Icon size={16} strokeWidth={1.5} />
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-black leading-tight">{item.label}</div>
                           <div className="text-[11px] text-gray-400 font-medium mt-0.5">{item.desc}</div>
                         </div>
                       </button>
-                    ))}
+                    )})}
                   </div>
                 </div>
                 <div className="h-px bg-gray-100 mx-3 mb-4"></div>
                 <div>
                   <h3 className="px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Funciones del chat</h3>
                   <div className="space-y-0.5">
-                    {chatFunctions.map((item, idx) => (
+                    {chatFunctions.map((item, idx) => {
+                      const Icon = item.icon || Sparkles;
+                      return (
                       <button key={idx} className="w-full flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group text-left">
                         <div className="mt-0.5 text-gray-400 group-hover:text-black transition-colors">
-                          <item.icon size={16} strokeWidth={1.5} />
+                          <Icon size={16} strokeWidth={1.5} />
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-black leading-tight">{item.label}</div>
                           <div className="text-[11px] text-gray-400 font-medium mt-0.5">{item.desc}</div>
                         </div>
                       </button>
-                    ))}
+                    )})}
                   </div>
                 </div>
               </div>
@@ -274,6 +294,7 @@
 
         // --- SIDEBAR OPTION ---
         const SidebarOption = ({ icon: Icon, label, onClick, isCollapsed }) => {
+            const IconComp = Icon || Sparkles;
             return (
                 <button 
                   onClick={onClick} 
@@ -284,7 +305,7 @@
                   `}
                   title={isCollapsed ? label : ""}
                 >
-                  <Icon size={14} strokeWidth={1.2} className="shrink-0 text-black" />
+                  <IconComp size={14} strokeWidth={1.2} className="shrink-0 text-black" />
                   {!isCollapsed && (
                       <span className="text-[13px] truncate text-black animate-in fade-in duration-100">
                          {label}
@@ -373,18 +394,14 @@
                 <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full transition-all z-10 backdrop-blur-md hover:scale-105">
                   <X size={20} strokeWidth={2} />
                 </button>
-                
-                {/* Contenedor Imagen */}
                 <div className="w-full relative bg-gray-50">
                    <img 
                      src="https://photos.fife.usercontent.google.com/pw/AP1GczP9HALxhpcOJUEWB_pu2It4mc6S9K8UuphRKRpjmec9NA7z3HUxB2M=w1290-h633-s-no-gm?authuser=0" 
                      className="w-full h-auto object-cover"
                      alt="Gemini 3 Announcement"
-                     style={{ display: 'block' }} // Evita espacios extra
+                     style={{ display: 'block' }} 
                   />
                 </div>
-
-                {/* Contenido Texto */}
                 <div className="p-8 pb-10 text-center space-y-3 bg-white">
                    <h2 className="text-3xl font-bold text-black tracking-tight font-inter">Ya llegó Gemini 3</h2>
                    <p className="text-gray-500 text-base font-normal leading-relaxed max-w-lg mx-auto font-dm-sans">
@@ -392,12 +409,7 @@
                      integrado directamente en ROTTER AI para respuestas más rápidas, precisas y potentes.
                    </p>
                    <div className="pt-2">
-                        <button 
-                            onClick={onClose}
-                            className="px-8 py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-900 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
-                        >
-                         Entendido
-                        </button>
+                        <button onClick={onClose} className="px-8 py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-900 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0">Entendido</button>
                    </div>
                 </div>
               </div>
@@ -752,7 +764,7 @@
                 setMessages(prev => [...prev, { id: Date.now() + 1, role: 'ai', type: 'image', content: imageUrl, toolUsed: 'image', modelId: currentModelObj.id }]);
               } else if (currentTool === 'doc') {
                  await new Promise(r => setTimeout(r, 600));
-                 setMessages(prev => [...prev, { id: Date.now() + 1, role: 'system', type: 'error', content: "⚠️ Doc generator requiere backend." }]);
+                 setMessages(prev => [...prev, { id: Date.now() + 1, role: 'system', type: 'error', content: ⚠️ Doc generator requiere backend." }]);
               } else {
                 let apiModelToUse = currentModelObj.apiModel;
                 if (currentTool === 'analyze') apiModelToUse = 'gemini-search';
@@ -1030,8 +1042,15 @@
           );
         }
 
-        const root = createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // --- ARRANQUE SEGURO ---
+        try {
+            const root = createRoot(document.getElementById('root'));
+            root.render(<App />);
+        } catch (err) {
+            console.error("Error al renderizar:", err);
+            document.getElementById('debug-console').style.display = 'block';
+            document.getElementById('debug-console').innerHTML += "🔴 ERROR AL RENDERIZAR REACT:\n" + err.message + "\n\n";
+        }
     </script>
 </body>
 </html>
