@@ -21,10 +21,22 @@
 
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #ffffff; }
+        #error-box { display: none; background: #fee2e2; color: #991b1b; padding: 20px; font-family: monospace; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; }
     </style>
 </head>
 <body>
+    <div id="error-box"></div>
+    
     <div id="root" style="height: 100vh; width: 100vw;"></div>
+
+    <script>
+        // Detector de errores (Para que no salga pantalla blanca)
+        window.onerror = function(message, source, lineno, colno, error) {
+            const box = document.getElementById('error-box');
+            box.style.display = 'block';
+            box.innerHTML = `<strong⚠️ Ocurrió un error:</strong><br>${message}<br><small>${source}:${lineno}</small>`;
+        };
+    </script>
 
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect, useRef } from 'react';
@@ -740,7 +752,7 @@
                 setMessages(prev => [...prev, { id: Date.now() + 1, role: 'ai', type: 'image', content: imageUrl, toolUsed: 'image', modelId: currentModelObj.id }]);
               } else if (currentTool === 'doc') {
                  await new Promise(r => setTimeout(r, 600));
-                 setMessages(prev => [...prev, { id: Date.now() + 1, role: 'system', type: 'error', content: ⚠️ Doc generator requiere backend." }]);
+                 setMessages(prev => [...prev, { id: Date.now() + 1, role: 'system', type: 'error', content: "⚠️ Doc generator requiere backend." }]);
               } else {
                 let apiModelToUse = currentModelObj.apiModel;
                 if (currentTool === 'analyze') apiModelToUse = 'gemini-search';
