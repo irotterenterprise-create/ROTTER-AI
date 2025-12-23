@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IRO AI</title>
@@ -120,12 +120,12 @@
     <!-- SIDEBAR -->
     <div id="sidebar" class="hidden md:flex flex-col h-full border-r border-gray-200 shrink-0 sidebar-transition relative z-40 bg-white w-[255px] absolute md:static shadow-2xl md:shadow-none">
         <div id="sidebar-header" class="flex items-center h-14 px-4 justify-between shrink-0 transition-all duration-300">
-            <div id="logo-container" class="flex items-center gap-2 animate-fade-in"><span class="font-sans font-bold text-sm tracking-tight text-black">IRO AI</span></div>
+            <div id="logo-container" class="flex items-center gap-2 animate-fade-in"><span class="font-sans font-bold text-sm tracking-tight text-black">ROTTER AI</span></div>
             <button id="btn-collapse" class="p-1.5 rounded-lg text-black hover:bg-gray-200 transition-colors"><i data-lucide="panel-left-close" width="16" height="16" stroke-width="1.2"></i></button>
         </div>
         <div id="collapsed-header" class="hidden h-14 w-full items-center justify-center">
     <button id="btn-expand" class="group relative w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300">
-        <img src="logo-negro.png" alt="Logo" class="w-7 h-7 object-contain transition-opacity duration-200 group-hover:opacity-0 absolute">
+        <span class="font-sans font-bold text-lg text-black group-hover:opacity-0 transition-opacity duration-200 absolute">R</span>
         <i data-lucide="panel-left-open" width="16" height="16" stroke-width="1.5" class="text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute"></i>
     </button>
 </div>        
@@ -209,26 +209,21 @@
             <div class="flex-1 overflow-y-auto custom-scrollbar p-6 flex flex-col items-center">
                 
                 <!-- TÍTULO Y LOGO (CENTRADO) -->
-                <!-- Added justify-center to parent div -->
                 <div class="w-full max-w-2xl mb-4 animate-slide-up flex items-center justify-center gap-3">
-                    <!-- Placeholder de Logo -->
-                   <img src="logo-negro.png" alt="Logo Rotter AI" class="w-10 h-10 object-contain shrink-0"> 
+                    <img src="logo-negro.png" alt="Logo Rotter AI" class="w-10 h-10 object-contain shrink-0"> 
                     <h1 class="font-inter font-bold text-[25.6px] text-black tracking-tight">IRO AI</h1>
                 </div>
 
-                <!-- Barra de Chat Especial (Tools) - UPDATED LAYOUT -->
-                <!-- relative min-h-[140px] -->
+                <!-- Barra de Chat Especial (Tools) -->
                 <div class="w-full max-w-2xl mb-10 animate-slide-up relative z-30">
                     <div class="bg-white border border-gray-300 rounded-2xl shadow-sm hover:shadow-md transition-all relative min-h-[140px] flex flex-col">
                         
-                        <!-- Input Area (Takes remaining space, starts top left) -->
-                        <!-- pb-12 to avoid overlap with bottom buttons -->
+                        <!-- Input Area -->
                         <textarea placeholder="Escribe tu idea o usa una herramienta..." class="w-full bg-transparent border-none outline-none text-black placeholder-gray-400 resize-none font-light font-inter text-lg leading-relaxed flex-1 p-4 pb-12 custom-scrollbar"></textarea>
 
-                        <!-- Bottom Actions Bar (Absolute bottom) -->
+                        <!-- Bottom Actions Bar -->
                         <div class="absolute bottom-2 left-2 right-2 flex justify-between items-center">
-                            
-                            <!-- Botón Adjuntar (Izquierda - Bottom) -->
+                            <!-- Botón Adjuntar (Izquierda) -->
                             <button id="btn-tools-attach" class="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-xl transition-colors">
                                 <i data-lucide="paperclip" width="16" height="16"></i>
                             </button>
@@ -382,7 +377,7 @@
             document.getElementById('btn-model-menu').addEventListener('click', (e) => { e.stopPropagation(); if(!state.isModelMenuOpen) closeAllMenusExcept('model-menu'); toggleState('isModelMenuOpen', 'model-menu'); });
             document.getElementById('btn-extras-menu').addEventListener('click', (e) => { e.stopPropagation(); if(!state.isExtrasOpen) closeAllMenusExcept('extras-menu'); toggleState('isExtrasOpen', 'extras-menu'); });
             document.getElementById('btn-collapse').addEventListener('click', () => { if(window.innerWidth < 768) closeMobileSidebar(); else setSidebar(true); });
-            document.getElementById('btn-expand').addEventListener('click', () => setSidebar(false));
+            document.getElementById('btn-expand').addEventListener('click', () => { if(window.innerWidth < 768) { openMobileSidebar(); setSidebar(false); } else { setSidebar(false); } });
             document.getElementById('btn-mobile-sidebar').addEventListener('click', openMobileSidebar);
             document.getElementById('mobile-overlay').addEventListener('click', closeMobileSidebar);
             document.getElementById('btn-plus').addEventListener('click', (e) => { 
@@ -543,36 +538,62 @@
         function regenerateResponse() { const l = document.getElementById('ai-loader'); l.classList.remove('hidden'); l.classList.add('flex'); scrollToBottom(); setTimeout(() => { l.classList.add('hidden'); l.classList.remove('flex'); addMessage('ai', "Respuesta regenerada."); }, 1000); }
         function toggleFeedback(b, t) { if(b.classList.contains('text-black')) { b.classList.remove('text-black','bg-gray-100'); b.classList.add('text-gray-400'); } else { b.classList.remove('text-gray-400'); b.classList.add('text-black','bg-gray-100'); } }
         
-        async function sendMessage() { const tx = document.getElementById('chat-textarea'); const t = tx.value.trim(); if(!t) return; tx.value = ''; tx.style.height = 'auto'; document.getElementById('btn-send').disabled = true; if(state.messages.length === 0) { state.messages.push({role:'user',content:t}); updateLayout(); } else { state.messages.push({role:'user',content:t}); } addMessage('user', t); const l = document.getElementById('ai-loader'); l.classList.remove('hidden'); l.classList.add('flex'); scrollToBottom(); try {
-        // 1. Llamada al cerebro
-        const response = await fetch('/.netlify/functions/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: t })
-        });
+        async function sendMessage() {
+            const tx = document.getElementById('chat-textarea');
+            const t = tx.value.trim();
+            if(!t) return;
 
-        const data = await response.json();
+            tx.value = ''; 
+            tx.style.height = 'auto';
+            document.getElementById('btn-send').disabled = true;
 
-        // 2. Ocultar cargando (con seguridad)
-        const l = document.getElementById('ai-loader');
-        if(l) { l.classList.add('hidden'); l.classList.remove('flex'); }
+            if(state.messages.length === 0) {
+                state.messages.push({role:'user',content:t});
+                updateLayout();
+            } else {
+                state.messages.push({role:'user',content:t});
+            }
 
-        if (data.reply) {
-            // ¡Éxito! Respuesta de la IA
-            addMessage('ai', data.reply);
-        } else {
-            // Error controlado (lo vemos en consola, pero al usuario le hablamos bonito)
-            console.error("Detalle del error:", data);
-            addMessage('ai', "Lo siento, tuve un pequeño problema técnico. Intenta de nuevo.");
+            addMessage('user', t);
+
+            const l = document.getElementById('ai-loader');
+            l.classList.remove('hidden'); l.classList.add('flex');
+            scrollToBottom();
+
+            try {
+                const response = await fetch('https://text.pollinations.ai/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: 'system', content: 'Eres IRO AI, un asistente inteligente y útil.' },
+                            ...state.messages.map(msg => ({
+                                role: msg.role === 'ai' ? 'assistant' : msg.role,
+                                content: msg.content
+                            }))
+                        ],
+                        model: 'openai',
+                        jsonMode: false
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Network response was not ok');
+                const textData = await response.text();
+                
+                l.classList.add('hidden'); 
+                l.classList.remove('flex');
+                
+                addMessage('ai', textData);
+                state.messages.push({role: 'ai', content: textData});
+                
+            } catch (error) {
+                console.error("Error calling AI:", error);
+                l.classList.add('hidden'); 
+                l.classList.remove('flex');
+                addMessage('ai', "Lo siento, hubo un error al conectar con el servidor de IA.");
+            }
         }
 
-    } catch (error) {
-        // Error de red o conexión
-        console.error("Error de red:", error);
-        const l = document.getElementById('ai-loader');
-        if(l) { l.classList.add('hidden'); l.classList.remove('flex'); }
-        addMessage('ai', "Error de conexión. Verifica tu internet.");
-    } }
         function addMessage(r, c) { const l = document.getElementById('messages-list'); const u = r === 'user'; const d = document.createElement('div'); d.className = `flex w-full ${u ? 'justify-end' : 'justify-start'} animate-fade-in`; let i = u ? `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-gray-100 shadow-sm bg-gray-100 text-black"><i data-lucide="user" width="20"></i></div>` : `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-gray-100 shadow-sm bg-white text-black"><img src="logo-negro.png" class="w-7 h-7 object-contain"></div>`; const pc = u ? c : marked.parse(c); const wc = u ? 'max-w-[50%]' : 'w-fit max-w-[45ch] md:max-w-[68ch]'; const b = `<div class="px-6 py-4 rounded-[1.5rem] text-base leading-relaxed tracking-wide shadow-sm ${u ? 'bg-gray-100 text-black rounded-tr-sm border border-gray-200' : 'bg-white text-black px-0 shadow-none border-transparent'} overflow-hidden ${wc}"><div class="prose prose-sm max-w-none break-words whitespace-pre-wrap ${u ? '' : 'font-light'}">${pc}</div></div>`; const ec = c.replace(/`/g, '\\`').replace(/"/g, '&quot;'); const a = !u ? `<div class="flex items-center gap-2 mt-2 justify-start pl-1"><button onclick="copyText(\`${ec}\`)" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="copy" width="14"></i></button><button onclick="regenerateResponse()" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="refresh-cw" width="14"></i></button><div class="h-4 w-px bg-gray-200 mx-1"></div><button onclick="toggleFeedback(this, 'like')" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="thumbs-up" width="14"></i></button><button onclick="toggleFeedback(this, 'dislike')" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="thumbs-down" width="14"></i></button></div>` : ''; d.innerHTML = `<div class="flex gap-4 ${u ? 'flex-row-reverse' : 'flex-row'} group w-full">${i}<div class="flex flex-col gap-1 ${u ? 'items-end' : 'items-start'} w-full">${b}${a}</div></div>`; l.appendChild(d); initIcons(); scrollToBottom(); }
         function scrollToBottom() { const v = document.getElementById('chat-viewport'); v.scrollTop = v.scrollHeight; }
         
