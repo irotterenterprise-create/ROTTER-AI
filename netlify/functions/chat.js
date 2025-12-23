@@ -1,28 +1,52 @@
-// ... (después de scrollToBottom) ...
+// netlify/functions/chat.js
+// Versión Corregida (CommonJS) para evitar el error de "ES Module"
 
-    try {
-        // LLAMADA REAL A IRO AI 🧠
-        const response = await fetch('/.netlify/functions/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: t })
-        });
+exports.handler = async function(event, context) {
+  // Solo permitimos mensajes POST (mensajes nuevos)
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  }
 
-        const data = await response.json();
+  try {
+    // 1. Leemos el mensaje
+    const body = JSON.parse(event.body);
+    const userMessage = body.message;
 
-        // Ocultar cargando
-        l.classList.add('hidden');
-        l.classList.remove('flex');
+    // 2. Usamos la llave secreta
+    const apiKey = process.env.GEMINI_API_KEY;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
-        if (data.reply) {
-            addMessage('ai', data.reply);
-        } else {
-            addMessage('ai', "Lo siento, tuve un error al pensar.");
-        }
+    // 3. Hablamos con Google (usando fetch que ya viene incluido)
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: userMessage }] }]
+      })
+    });
 
-    } catch (error) {
-        console.error(error);
-        l.classList.add('hidden');
-        l.classList.remove('flex');
-        addMessage('ai', "Error de conexión. Verifica tu internet.");
+    const data = await response.json();
+
+    // 4. Verificamos errores de Google
+    if (!response.ok) {
+      console.error("Error de Google:", data);
+      return { statusCode: response.status, body: JSON.stringify(data) };
     }
+
+    // 5. Sacamos la respuesta limpia
+    // (Usamos ?. para evitar errores si la respuesta viene vacía)
+    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "No se pudo generar respuesta.";
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ reply: aiResponse })
+    };
+
+  } catch (error) {
+    console.error("Error grave:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Error interno del servidor IRO AI." })
+    };
+  }
+};
