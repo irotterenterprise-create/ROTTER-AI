@@ -544,28 +544,34 @@
         function toggleFeedback(b, t) { if(b.classList.contains('text-black')) { b.classList.remove('text-black','bg-gray-100'); b.classList.add('text-gray-400'); } else { b.classList.remove('text-gray-400'); b.classList.add('text-black','bg-gray-100'); } }
         
         async function sendMessage() { const tx = document.getElementById('chat-textarea'); const t = tx.value.trim(); if(!t) return; tx.value = ''; tx.style.height = 'auto'; document.getElementById('btn-send').disabled = true; if(state.messages.length === 0) { state.messages.push({role:'user',content:t}); updateLayout(); } else { state.messages.push({role:'user',content:t}); } addMessage('user', t); const l = document.getElementById('ai-loader'); l.classList.remove('hidden'); l.classList.add('flex'); scrollToBottom(); try {
+        // 1. Llamada al cerebro
         const response = await fetch('/.netlify/functions/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: t })
         });
+
         const data = await response.json();
-        
-        // Ocultar loader
-        const l = document.getElementById('ai-loader'); // Aseguramos referencia
-        l.classList.add('hidden');
-        l.classList.remove('flex');
+
+        // 2. Ocultar cargando (con seguridad)
+        const l = document.getElementById('ai-loader');
+        if(l) { l.classList.add('hidden'); l.classList.remove('flex'); }
 
         if (data.reply) {
+            // ¡Éxito! Respuesta de la IA
             addMessage('ai', data.reply);
         } else {
-            addMessage('ai', "Lo siento, tuve un problema.");
+            // Error controlado (lo vemos en consola, pero al usuario le hablamos bonito)
+            console.error("Detalle del error:", data);
+            addMessage('ai', "Lo siento, tuve un pequeño problema técnico. Intenta de nuevo.");
         }
-    } catch (e) {
-        console.error(e);
-        document.getElementById('ai-loader').classList.add('hidden');
-        document.getElementById('ai-loader').classList.remove('flex');
-        addMessage('ai', "Error de conexión.");
+
+    } catch (error) {
+        // Error de red o conexión
+        console.error("Error de red:", error);
+        const l = document.getElementById('ai-loader');
+        if(l) { l.classList.add('hidden'); l.classList.remove('flex'); }
+        addMessage('ai', "Error de conexión. Verifica tu internet.");
     } }
         function addMessage(r, c) { const l = document.getElementById('messages-list'); const u = r === 'user'; const d = document.createElement('div'); d.className = `flex w-full ${u ? 'justify-end' : 'justify-start'} animate-fade-in`; let i = u ? `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-gray-100 shadow-sm bg-gray-100 text-black"><i data-lucide="user" width="20"></i></div>` : `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-gray-100 shadow-sm bg-white text-black"><img src="logo-negro.png" class="w-7 h-7 object-contain"></div>`; const pc = u ? c : marked.parse(c); const wc = u ? 'max-w-[50%]' : 'w-fit max-w-[45ch] md:max-w-[68ch]'; const b = `<div class="px-6 py-4 rounded-[1.5rem] text-base leading-relaxed tracking-wide shadow-sm ${u ? 'bg-gray-100 text-black rounded-tr-sm border border-gray-200' : 'bg-white text-black px-0 shadow-none border-transparent'} overflow-hidden ${wc}"><div class="prose prose-sm max-w-none break-words whitespace-pre-wrap ${u ? '' : 'font-light'}">${pc}</div></div>`; const ec = c.replace(/`/g, '\\`').replace(/"/g, '&quot;'); const a = !u ? `<div class="flex items-center gap-2 mt-2 justify-start pl-1"><button onclick="copyText(\`${ec}\`)" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="copy" width="14"></i></button><button onclick="regenerateResponse()" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="refresh-cw" width="14"></i></button><div class="h-4 w-px bg-gray-200 mx-1"></div><button onclick="toggleFeedback(this, 'like')" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="thumbs-up" width="14"></i></button><button onclick="toggleFeedback(this, 'dislike')" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="thumbs-down" width="14"></i></button></div>` : ''; d.innerHTML = `<div class="flex gap-4 ${u ? 'flex-row-reverse' : 'flex-row'} group w-full">${i}<div class="flex flex-col gap-1 ${u ? 'items-end' : 'items-start'} w-full">${b}${a}</div></div>`; l.appendChild(d); initIcons(); scrollToBottom(); }
         function scrollToBottom() { const v = document.getElementById('chat-viewport'); v.scrollTop = v.scrollHeight; }
