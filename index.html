@@ -202,20 +202,39 @@
                         </div>
                     </div>
 
-                    <!-- EXTRAS MENU -->
-                    <div class="relative ml-auto">
-                        <button id="btn-extras-menu" class="flex items-center gap-1.5 text-sm font-medium text-black hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">Extras <i data-lucide="chevron-down" width="14" height="14" class="text-gray-400"></i></button>
-                        <!-- Menú Extras -->
-                        <div id="extras-menu" class="hidden absolute top-full right-0 mt-3 w-[340px] bg-gray-100 rounded-2xl shadow-2xl border border-gray-200 p-2 z-50 animate-zoom-in origin-top-right overflow-hidden font-dm-sans">
-                            <div class="max-h-[80vh] overflow-y-auto custom-scrollbar p-2">
-                                <div class="mb-4">
-                                    <h3 class="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Herramientas</h3>
-                                    <div class="space-y-0.5 text-black" id="extras-tools-list"></div>
+                    <!-- WRAPPER PARA EL LADO DERECHO (EXPLORAR + EXTRAS) -->
+                    <div class="ml-auto flex items-center gap-2">
+                        
+                        <!-- NUEVO: EXPLORAR MENU -->
+                        <div class="relative">
+                            <button id="btn-explore-menu" class="flex items-center gap-1.5 text-sm font-medium text-black hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">Explorar <i data-lucide="chevron-down" width="14" height="14" class="text-gray-400"></i></button>
+                            <!-- Menú Explorar Content (CORREGIDO) -->
+                            <div id="explore-menu" class="hidden absolute top-full right-0 mt-3 w-[280px] bg-white rounded-2xl shadow-2xl border border-gray-200 p-2 z-50 animate-zoom-in origin-top-right overflow-hidden font-dm-sans">
+                                <div class="p-1">
+                                    <h3 class="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Información</h3>
+                                    <a href="/sobre-nuestro-modelo" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium text-black group">
+                                        <i data-lucide="bot" width="16" class="text-gray-400 group-hover:text-black transition-colors"></i>
+                                        Sobre nuestro modelo
+                                    </a>
                                 </div>
-                                <div class="h-px bg-gray-200 mx-3 mb-4"></div>
-                                <div>
-                                    <h3 class="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Funciones del chat</h3>
-                                    <div class="space-y-0.5 text-black" id="extras-functions-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- EXTRAS MENU (Original) -->
+                        <div class="relative">
+                            <button id="btn-extras-menu" class="flex items-center gap-1.5 text-sm font-medium text-black hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">Extras <i data-lucide="chevron-down" width="14" height="14" class="text-gray-400"></i></button>
+                            <!-- Menú Extras -->
+                            <div id="extras-menu" class="hidden absolute top-full right-0 mt-3 w-[340px] bg-gray-100 rounded-2xl shadow-2xl border border-gray-200 p-2 z-50 animate-zoom-in origin-top-right overflow-hidden font-dm-sans">
+                                <div class="max-h-[80vh] overflow-y-auto custom-scrollbar p-2">
+                                    <div class="mb-4">
+                                        <h3 class="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Herramientas</h3>
+                                        <div class="space-y-0.5 text-black" id="extras-tools-list"></div>
+                                    </div>
+                                    <div class="h-px bg-gray-200 mx-3 mb-4"></div>
+                                    <div>
+                                        <h3 class="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Funciones del chat</h3>
+                                        <div class="space-y-0.5 text-black" id="extras-functions-list"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -349,6 +368,7 @@
             isSidebarCollapsed: true, 
             isModelMenuOpen: false, 
             isExtrasOpen: false, 
+            isExploreOpen: false, // NUEVO ESTADO
             isPlusMenuOpen: false, 
             isHistoryOpen: false, 
             messages: [], 
@@ -619,6 +639,13 @@
                 if(state.isIroMenuOpen) icon.classList.add('rotate-180'); else icon.classList.remove('rotate-180');
             });
 
+            // NUEVO BOTÓN: EXPLORAR
+            document.getElementById('btn-explore-menu').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(!state.isExploreOpen) closeAllMenusExcept('explore-menu');
+                toggleState('isExploreOpen', 'explore-menu');
+            });
+
             document.getElementById('btn-extras-menu').addEventListener('click', (e) => { e.stopPropagation(); if(!state.isExtrasOpen) closeAllMenusExcept('extras-menu'); toggleState('isExtrasOpen', 'extras-menu'); });
             
             document.getElementById('btn-collapse').addEventListener('click', () => { 
@@ -805,6 +832,7 @@
                  document.getElementById('iro-menu-icon')?.classList.remove('rotate-180');
             }
             if(exceptId !== 'extras-menu' && state.isExtrasOpen) toggleState('isExtrasOpen', 'extras-menu');
+            if(exceptId !== 'explore-menu' && state.isExploreOpen) toggleState('isExploreOpen', 'explore-menu'); // NUEVO
             if(exceptId !== 'plus-menu' && state.isPlusMenuOpen) {
                 if(window.innerWidth < 768) { closePlusMenuMobile(); } else { document.getElementById('plus-menu-desktop').classList.add('hidden'); }
                 state.isPlusMenuOpen = false;
@@ -822,6 +850,9 @@
                  document.getElementById('iro-menu-icon')?.classList.remove('rotate-180');
             }
             if (state.isExtrasOpen && !e.target.closest('#extras-menu') && !e.target.closest('#btn-extras-menu')) toggleState('isExtrasOpen', 'extras-menu');
+            // NUEVO HANDLER PARA EXPLORAR
+            if (state.isExploreOpen && !e.target.closest('#explore-menu') && !e.target.closest('#btn-explore-menu')) toggleState('isExploreOpen', 'explore-menu');
+            
             if (state.isPlusMenuOpen && window.innerWidth >= 768 && !e.target.closest('#plus-menu-desktop') && !e.target.closest('#btn-plus')) closeAllMenusExcept(null);
             if (state.isAgentsMenuOpen && !e.target.closest('#agents-menu') && !e.target.closest('#btn-tools-agents')) toggleState('isAgentsMenuOpen', 'agents-menu');
             if (state.isToolsAttachOpen && !e.target.closest('#tools-attach-menu') && !e.target.closest('#btn-tools-attach')) toggleState('isToolsAttachOpen', 'tools-attach-menu');

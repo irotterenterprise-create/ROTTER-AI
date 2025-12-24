@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRO AI - Conoce IRO v.9</title>
+    
+    <!-- Importando fuentes: Inter, JetBrains Mono y Open Sans (añadida de nuevo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;700&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- RESET Y ESTILOS BASE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000; /* Fondo Negro Puro */
+            color: #FFFFFF; /* Texto Blanco Puro */
+            font-family: 'Inter', sans-serif; /* Tipografía para lectura larga */
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- TIPOGRAFÍA TECH --- */
+        h1, h2, h3, .btn-white, .intro-text {
+            font-family: 'JetBrains Mono', monospace; /* Estilo Programador */
+        }
+
+        /* --- UTILIDADES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Botón Blanco Estándar */
+        .btn-white {
+            display: inline-block;
+            background-color: #FFFFFF;
+            color: #000000;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 4px; /* Bordes un poco más cuadrados para estilo tech */
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-white:hover {
+            background-color: #00FF41; /* Hover Matrix Green */
+            color: #000000;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: rgba(0, 0, 0, 0.95); /* Ligera transparencia */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding-top: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Estilo específico para la marca IRO AI - Open Sans Negrita */
+        .brand-text {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Separador estilo Tech (Línea punteada) */
+        .header-separator {
+            height: 1px;
+            background-image: linear-gradient(to right, #333 50%, rgba(255,255,255,0) 0%);
+            background-position: bottom;
+            background-size: 10px 1px;
+            background-repeat: repeat-x;
+            width: 100%;
+            margin-bottom: 1px;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 60px 0;
+            text-align: left;
+        }
+
+        .hero-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero-title span {
+            color: #00FF41; /* Acento verde en el título */
+        }
+
+        .hero-image-container {
+            margin-top: 40px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Decoración de esquinas para la imagen (estilo visor) */
+        .hero-image-container::before {
+            content: '';
+            position: absolute;
+            top: -10px; left: -10px;
+            width: 20px; height: 20px;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+        }
+        .hero-image-container::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; right: -10px;
+            width: 20px; height: 20px;
+            border-bottom: 2px solid #FFFFFF;
+            border-right: 2px solid #FFFFFF;
+        }
+
+        .hero-img {
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 2721 / 1440; 
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid #222;
+            display: block;
+            /* Filtro sutil para que se integre mejor en dark mode */
+            filter: grayscale(20%) contrast(110%);
+        }
+
+        /* --- SECTION INFERIOR --- */
+        .bottom-section {
+            padding: 60px 0 100px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .intro-text {
+            font-size: 18px; /* Un poco más pequeño al ser monospaced */
+            text-align: center;
+            margin-bottom: 50px;
+            max-width: 800px;
+            font-weight: 400;
+            color: #cccccc;
+        }
+
+        .intro-text::before {
+            content: '> ';
+            color: #00FF41;
+        }
+
+        /* --- TABLA COMPARATIVA ESTILO TECH --- */
+        .comparison-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #333;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 20px;
+            text-align: left;
+            vertical-align: top; /* Alineación arriba para textos largos */
+        }
+
+        th {
+            font-weight: 700;
+            font-size: 14px;
+            background-color: #0a0a0a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+        }
+
+        th:first-child, td:first-child {
+            width: 20%;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        th:nth-child(2), td:nth-child(2) {
+            width: 40%;
+            background-color: rgba(0, 255, 65, 0.03); /* Tinte verde muy sutil */
+            border-left: 1px solid #00FF41; /* Borde verde lateral */
+            border-right: 1px solid #00FF41;
+        }
+
+        /* Header de la columna IRO */
+        th:nth-child(2) {
+             color: #00FF41;
+             border-top: 1px solid #00FF41;
+        }
+
+        th:nth-child(3), td:nth-child(3) {
+            width: 40%;
+            color: #888;
+        }
+
+        .iro-highlight {
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .tech-green {
+            color: #00FF41;
+            font-weight: 700;
+        }
+        
+        /* Estilo tachado sutil para sacrificios */
+        .strike-subtle {
+            text-decoration: line-through; 
+            opacity: 0.6;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 26px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .header-content .btn-white {
+                width: 100%;
+            }
+
+            .intro-text {
+                font-size: 16px;
+                padding: 0 10px;
+            }
+
+            th, td {
+                padding: 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="brand">
+                    <!-- IMAGEN DIRECTA: Sin scripts de fallback, lista para el archivo real -->
+                    <img src="iro-logo-blanco.png" alt="IRO AI Logo" class="logo-img">
+                    
+                    <span class="brand-text">IRO AI</span>
+                </div>
+            </div>
+            <!-- Separador punteado -->
+            <div class="header-separator"></div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <!-- Título actualizado -->
+            <h1 class="hero-title">Conoce más sobre IRO v.9</h1>
+            
+            <button class="btn-white" onclick="redirectToApp()">Probar Gratis</button>
+
+            <div class="hero-image-container">
+                <!-- IMAGEN DIRECTA: Apuntando al archivo PNG. El onerror es solo para el preview aquí en Canvas, lo puedes borrar luego si quieres. -->
+                <img src="sobre-iro-v9.png" 
+                     alt="Interfaz de IRO v.9" 
+                     class="hero-img"
+                     onerror="this.src='https://placehold.co/2721x1440/050505/333?text=SYSTEM_PREVIEW_V9';">
+            </div>
+        </section>
+
+        <!-- BOTTOM SECTION -->
+        <section class="bottom-section">
+            <p class="intro-text">
+                Descubre cómo IRO v.9 redefine la interacción con la IA, ofreciendo potencia y control sin sacrificar la simplicidad.
+            </p>
+
+            <div class="comparison-table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>// Aspecto</th>
+                            <th>IRO AI Pro</th>
+                            <th>Otras IAs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Naturaleza</td>
+                            <td class="iro-highlight">Plataforma con varias <span class="tech-green">herramientas y motores</span></td>
+                            <td>Modelo único y cerrado</td>
+                        </tr>
+                        <tr>
+                            <td>Fortalezas</td>
+                            <td class="iro-highlight">Organización de chats, proyectos, agentes, funciones prácticas, potencia técnica, <span class="tech-green">creatividad y precisión</span></td>
+                            <td>Más rápido, pero sacrificas <span class="strike-subtle">potencia y control</span></td>
+                        </tr>
+                        <tr>
+                            <td>Enfoque</td>
+                            <td class="iro-highlight">Usabilidad y <span class="tech-green">accesibilidad</span></td>
+                            <td>Calidad del modelo</td>
+                        </tr>
+                        <tr>
+                            <td>Ideal para</td>
+                            <td class="iro-highlight">Usuarios que quieren análisis extenso, resúmenes rápidos, investigación, <span class="tech-green">crear un sitio web</span> y también uso normal</td>
+                            <td>Usuarios que usan un chat de IA para cosas del día a día, código y resúmenes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function redirectToApp() {
+            window.location.href = "https://ai.irotter.online";
+        }
+    </script>
+</body>
+</html>
