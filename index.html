@@ -13,7 +13,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Google Fonts: Inter & DM Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,200;300;400;500;700&display=swap" rel="stylesheet">
 
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -56,17 +56,6 @@
             100% { background-color: transparent; transform: scale(1); } 
         }
         .animate-highlight { animation: highlightPulse 0.6s ease-in-out 2; }
-
-        .sidebar-transition { transition: width 0.3s ease-in-out, background-color 0.3s; }
-        
-        /* Markdown Styles */
-        .prose p { margin-bottom: 0.8em; line-height: 1.6; }
-        .prose ul { list-style-type: disc; padding-left: 1.2em; margin-bottom: 0.8em; }
-        .prose ol { list-style-type: decimal; padding-left: 1.2em; margin-bottom: 0.8em; }
-        .prose strong { font-weight: 700; color: #000; }
-        .prose code { background-color: #f3f4f6; padding: 0.1em 0.3em; border-radius: 0.2em; font-family: monospace; font-size: 0.9em; color: #dc2626; border: 1px solid #e5e7eb; }
-        .prose pre { background-color: #0a0a0a; color: #e5e7eb; padding: 1em; border-radius: 0.5em; overflow-x: auto; margin-bottom: 1em; border: 1px solid rgba(255,255,255,0.1); }
-        .prose pre code { background-color: transparent; color: inherit; border: none; padding: 0; }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden selection:bg-black selection:text-white">
@@ -81,9 +70,9 @@
     <div id="mobile-overlay" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden transition-opacity"></div>
     <div id="global-click-overlay" class="hidden fixed inset-0 bg-transparent z-[60]" onclick="closeAllMenusExcept(null)"></div>
 
-    <!-- MENÚS FLOTANTES (Tools View) -->
+    <!-- MENÚS FLOTANTES -->
     
-    <!-- Menú AGENTES (Cerebrito) -->
+    <!-- Menú AGENTES -->
     <div id="agents-menu" class="hidden fixed w-48 bg-white border border-gray-200 rounded-xl shadow-2xl animate-zoom-in z-[100] p-1.5 overflow-hidden">
         <button onclick="selectAgent(1)" class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-[13px] font-medium text-black transition-colors">Agente 1</button>
         <button onclick="selectAgent(2)" class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-[13px] font-medium text-black transition-colors">Agente 2 MPR</button>
@@ -103,9 +92,7 @@
             <div class="bg-gray-100 p-1.5 rounded-md"><i data-lucide="paperclip" width="14"></i></div> Adjuntar Fotos y Archivos
         </button>
         <div class="h-px bg-gray-100 my-1"></div>
-        <div class="grid grid-cols-1 gap-0.5" id="tools-advanced-list">
-            <!-- JS Generated -->
-        </div>
+        <div class="grid grid-cols-1 gap-0.5" id="tools-advanced-list"></div>
     </div>
 
     <!-- Menú ADJUNTAR (Chat Normal PC) -->
@@ -118,42 +105,52 @@
     </div>
 
     <!-- SIDEBAR -->
-    <div id="sidebar" class="hidden md:flex flex-col h-full border-r border-gray-200 shrink-0 sidebar-transition relative z-40 bg-white w-[255px] absolute md:static shadow-2xl md:shadow-none">
-        <div id="sidebar-header" class="flex items-center h-14 px-4 justify-between shrink-0 transition-all duration-300">
-            <div id="logo-container" class="flex items-center gap-2 animate-fade-in"><span class="font-sans font-bold text-sm tracking-tight text-black">ROTTER AI</span></div>
+    <div id="sidebar" class="hidden md:flex flex-col h-full border-r border-gray-200 shrink-0 sidebar-transition relative z-40 bg-white w-[70px] absolute md:static shadow-2xl md:shadow-none font-dm-sans">
+        
+        <!-- Cabecera Sidebar (Expanded) -->
+        <div id="sidebar-header" class="hidden flex items-center h-14 px-4 justify-between shrink-0 transition-all duration-300">
+            <div id="logo-container" class="flex items-center gap-3 animate-fade-in">
+                <img src="logo-negro.png" onerror="this.src='https://via.placeholder.com/24x24?text=L'" alt="Logo" class="w-6 h-6 object-contain">
+                <span class="font-bold text-sm tracking-tight text-black">IRO AI</span>
+            </div>
             <button id="btn-collapse" class="p-1.5 rounded-lg text-black hover:bg-gray-200 transition-colors"><i data-lucide="panel-left-close" width="16" height="16" stroke-width="1.2"></i></button>
         </div>
-        <div id="collapsed-header" class="hidden h-14 w-full items-center justify-center">
-    <button id="btn-expand" class="group relative w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300">
-        <span class="font-sans font-bold text-lg text-black group-hover:opacity-0 transition-opacity duration-200 absolute">R</span>
-        <i data-lucide="panel-left-open" width="16" height="16" stroke-width="1.5" class="text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute"></i>
-    </button>
-</div>        
+        
+        <!-- Cabecera Sidebar Colapsada -->
+        <div id="collapsed-header" class="flex h-14 w-full items-center justify-center">
+            <button id="btn-expand" class="group relative w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300">
+                <img src="logo-negro.png" onerror="this.style.display='none'; this.nextElementSibling.style.opacity='1';" alt="Logo" class="w-6 h-6 object-contain absolute opacity-100 group-hover:opacity-0 transition-opacity duration-200">
+                <i data-lucide="panel-left-open" width="16" height="16" stroke-width="1.5" class="text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute"></i>
+            </button>
+        </div>
+        
         <!-- Opciones Principales -->
-        <div class="flex flex-col gap-1 px-3 mt-2 flex-1 overflow-y-auto sidebar-scrollbar" id="sidebar-options"></div>
+        <div class="flex flex-col gap-[3px] px-0 mt-2 flex-1 overflow-y-auto sidebar-scrollbar" id="sidebar-options">
+            <!-- JS Generates this -->
+        </div>
         
         <!-- Footer Group -->
         <div class="mt-auto">
-            <!-- Botones de Descarga -->
-            <div class="px-3 pb-2 flex flex-col gap-1">
-                <button id="btn-download-pc" class="sidebar-item w-full flex items-center px-3 py-2 rounded-[8px] gap-3 text-black hover:bg-gray-100 transition-all group">
-                    <i data-lucide="monitor" width="14" height="14" stroke-width="1.2" class="shrink-0 text-black"></i>
-                    <span class="text-[12px] truncate text-black fade-in-fast sidebar-label font-medium">Descargar para PC</span>
-                </button>
-                <button id="btn-download-mobile" class="sidebar-item w-full flex items-center px-3 py-2 rounded-[8px] gap-3 text-black hover:bg-gray-100 transition-all group">
-                    <i data-lucide="smartphone" width="14" height="14" stroke-width="1.2" class="shrink-0 text-black"></i>
-                    <span class="text-[12px] truncate text-black fade-in-fast sidebar-label font-medium">Descargar para Movil</span>
+            <div class="px-3 pb-2">
+                <button id="btn-download-app" class="sidebar-item w-full flex items-center justify-center py-2 rounded-[8px] gap-[3px] text-black hover:bg-gray-100 transition-all group">
+                    <span class="text-[11.5px] truncate text-black fade-in-fast sidebar-label font-medium flex-1 text-left hidden">Descargar IRO AI</span>
+                    <div class="flex gap-2 text-gray-400 group-hover:text-black transition-colors fade-in-fast sidebar-label hidden">
+                        <i data-lucide="monitor" width="12.5" height="12.5" stroke-width="1.5"></i>
+                        <i data-lucide="smartphone" width="12.5" height="12.5" stroke-width="1.5"></i>
+                    </div>
                 </button>
             </div>
             
-            <div class="w-full h-px bg-gray-200 mx-auto mb-1"></div>
-
-            <!-- Configuración -->
-            <div class="p-3 pt-1">
-                <button class="sidebar-item w-full flex items-center px-3 py-2 rounded-[8px] gap-3 text-black hover:bg-gray-100 transition-all group">
-                    <i data-lucide="settings" width="14" height="14" stroke-width="1.2" class="shrink-0 text-black"></i>
-                    <span class="text-[13px] truncate text-black fade-in-fast sidebar-label">Configuración</span>
+            <div class="p-3 pt-0 pb-1">
+                <button class="sidebar-item w-full flex items-center justify-center py-2 rounded-[8px] gap-[3px] text-black hover:bg-gray-100 transition-all group">
+                    <i data-lucide="settings" width="16" height="16" stroke-width="1.2" class="shrink-0 text-black"></i>
+                    <span class="text-[13px] truncate text-black fade-in-fast sidebar-label font-medium hidden">Configuración</span>
                 </button>
+            </div>
+            
+            <!-- ID DE USUARIO (Visible cuando la barra está expandida) -->
+            <div id="user-id-display" class="w-full text-center pb-3 hidden fade-in-fast sidebar-label">
+                <span class="text-[7px] text-gray-400 font-mono tracking-wider">ID: 8F3K-9L2P</span>
             </div>
         </div>
     </div>
@@ -164,24 +161,62 @@
         <!-- 1. VISTA STANDARD (Chat Normal) -->
         <div id="standard-view" class="flex flex-col h-full w-full">
             <!-- Header Standard -->
-            <div class="h-14 shrink-0 border-b border-gray-200/50 flex items-center justify-between px-6 sticky top-0 bg-white/80 backdrop-blur-md z-30">
-                <div class="flex items-center gap-3">
+            <div class="h-14 shrink-0 flex items-center justify-between px-6 sticky top-0 bg-white/80 backdrop-blur-md z-30 font-dm-sans">
+                <div class="flex items-center gap-3 w-full relative">
                     <button id="btn-mobile-sidebar" class="md:hidden p-2 mr-1 text-black hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center border border-gray-200 shadow-sm active:scale-95"><i data-lucide="panel-left" width="18" height="18"></i></button>
+                    
+                    <!-- MENU "IRO AI" -->
                     <div class="relative">
-                        <button id="btn-model-menu" class="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-black hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors"><span id="selected-model-name">IRO v.9</span><i data-lucide="chevron-down" width="14" height="14"></i></button>
-                        <div id="model-menu" class="hidden absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-1 animate-zoom-in">
-                            <button onclick="selectModel('IRO v.9')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-100 transition-colors bg-black text-white">IRO v.9</button>
-                            <button onclick="selectModel('GPT-5.2')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center justify-between hover:bg-gray-100 transition-colors group text-black">GPT-5.2 <i data-lucide="lock" width="12" class="text-gray-400 group-hover:text-black"></i></button>
-                            <button onclick="selectModel('Gemini 3')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center justify-between hover:bg-gray-100 transition-colors group text-black"><span class="flex items-center gap-2">Gemini 3 <span class="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">NUEVO</span></span> <i data-lucide="lock" width="12" class="text-gray-400 group-hover:text-black"></i></button>
+                        <button id="btn-iro-menu" class="flex items-center gap-1.5 text-xs font-dm-sans font-[300] text-black hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors group">
+                            <span>IRO AI</span>
+                            <i data-lucide="chevron-down" width="14" height="14" class="transition-transform duration-200 text-gray-400 group-hover:text-black" id="iro-menu-icon"></i>
+                        </button>
+                        
+                        <!-- Destacados Popover -->
+                        <div id="iro-menu-content" class="hidden absolute top-full left-0 mt-3 w-[280px] bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 p-3 animate-zoom-in overflow-hidden">
+                            <div class="flex flex-col gap-3">
+                                <!-- IMAGEN FULL WIDTH SIN BORDES DENTRO DEL CONTENEDOR -->
+                                <div class="w-full aspect-video bg-gray-50 rounded-lg overflow-hidden relative border border-gray-100 group">
+                                    <img src="destacados.png" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');" alt="Destacados" class="w-full h-full object-cover">
+                                    <!-- Fallback -->
+                                    <div class="hidden absolute inset-0 bg-gray-100 flex-col items-center justify-center text-gray-400">
+                                        <i data-lucide="image" width="24"></i>
+                                        <span class="text-[10px] mt-1">destacados.png</span>
+                                    </div>
+                                    <!-- Gradiente sutil para separación -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                </div>
+                                
+                                <!-- Text (Debajo de la imagen) -->
+                                <div class="px-1">
+                                    <p class="text-[13px] leading-snug font-dm-sans text-gray-600 font-light">
+                                        Descubre las funciones avanzadas de nuestra IA y cómo pueden ayudarte
+                                    </p>
+                                </div>
+                                
+                                <!-- Button -->
+                                <button class="w-1/2 bg-black text-white text-base font-[300] py-2.5 rounded-full hover:bg-gray-800 transition-colors font-dm-sans shadow-lg shadow-black/20">
+                                    Probar
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="relative">
+
+                    <!-- EXTRAS MENU -->
+                    <div class="relative ml-auto">
                         <button id="btn-extras-menu" class="flex items-center gap-1.5 text-sm font-medium text-black hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">Extras <i data-lucide="chevron-down" width="14" height="14" class="text-gray-400"></i></button>
-                        <div id="extras-menu" class="hidden absolute top-full left-0 mt-3 w-[340px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 z-50 animate-zoom-in origin-top-left overflow-hidden">
+                        <!-- Menú Extras -->
+                        <div id="extras-menu" class="hidden absolute top-full right-0 mt-3 w-[340px] bg-gray-100 rounded-2xl shadow-2xl border border-gray-200 p-2 z-50 animate-zoom-in origin-top-right overflow-hidden font-dm-sans">
                             <div class="max-h-[80vh] overflow-y-auto custom-scrollbar p-2">
-                                <div class="mb-4"><h3 class="px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Herramientas</h3><div class="space-y-0.5" id="extras-tools-list"></div></div>
-                                <div class="h-px bg-gray-100 mx-3 mb-4"></div>
-                                <div><h3 class="px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Funciones del chat</h3><div class="space-y-0.5" id="extras-functions-list"></div></div>
+                                <div class="mb-4">
+                                    <h3 class="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Herramientas</h3>
+                                    <div class="space-y-0.5 text-black" id="extras-tools-list"></div>
+                                </div>
+                                <div class="h-px bg-gray-200 mx-3 mb-4"></div>
+                                <div>
+                                    <h3 class="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Funciones del chat</h3>
+                                    <div class="space-y-0.5 text-black" id="extras-functions-list"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -192,43 +227,31 @@
             <div id="chat-viewport" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth custom-scrollbar relative flex flex-col items-center">
                 <div id="welcome-screen" class="flex-1 flex flex-col items-center justify-center min-h-[50vh] transition-all duration-500 w-full">
                     <div class="text-center mb-8 animate-slide-up md:-translate-y-8"><h1 id="greeting-text" class="font-inter text-[24px] font-light tracking-tight text-black">Hola, creador.</h1></div>
-                    <div id="center-content-spot" class="w-full max-w-4xl px-4 animate-slide-up flex flex-col items-center" style="animation-delay: 0.1s;"></div>
+                    <div id="center-content-spot" class="w-full max-w-3xl px-4 animate-slide-up flex flex-col items-center" style="animation-delay: 0.1s;"></div>
                 </div>
-                <div id="messages-list" class="flex flex-col gap-8 pb-4 w-full max-w-4xl hidden"></div>
-                <div id="ai-loader" class="hidden w-full max-w-4xl pl-14 justify-start"><div class="flex gap-2 p-2"><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 0ms"></span><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 150ms"></span><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 300ms"></span></div></div>
+                <div id="messages-list" class="flex flex-col gap-8 pb-4 w-full max-w-3xl hidden"></div>
+                <div id="ai-loader" class="hidden w-full max-w-3xl pl-14 justify-start"><div class="flex gap-2 p-2"><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 0ms"></span><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 150ms"></span><span class="w-2.5 h-2.5 bg-black rounded-full animate-bounce" style="animation-delay: 300ms"></span></div></div>
             </div>
             
-            <div id="bottom-bar-container" class="w-full shrink-0 pb-8 pt-4 px-4 bg-white z-20 hidden"><div id="bottom-input-spot" class="max-w-4xl mx-auto relative z-20"></div></div>
+            <div id="bottom-bar-container" class="w-full shrink-0 pb-8 pt-4 px-4 bg-white z-20 hidden md:block"><div id="bottom-input-spot" class="max-w-3xl mx-auto relative z-20"></div></div>
         </div>
 
-        <!-- 2. VISTA MAS HERRAMIENTAS (Tools View) -->
+        <!-- 2. VISTA MAS HERRAMIENTAS -->
         <div id="tools-view" class="hidden flex-col h-full w-full bg-white relative overflow-hidden">
-            <!-- Header Simulado (Spacer) -->
             <div class="h-14 w-full shrink-0"></div>
-
             <div class="flex-1 overflow-y-auto custom-scrollbar p-6 flex flex-col items-center">
-                
-                <!-- TÍTULO Y LOGO (CENTRADO) -->
                 <div class="w-full max-w-2xl mb-4 animate-slide-up flex items-center justify-center gap-3">
-                    <img src="logo-negro.png" alt="Logo Rotter AI" class="w-10 h-10 object-contain shrink-0"> 
+                    <img src="logo-negro.png" onerror="this.src='https://via.placeholder.com/40x40?text=I'" alt="Logo IRO AI" class="w-10 h-10 object-contain shrink-0"> 
                     <h1 class="font-inter font-bold text-[25.6px] text-black tracking-tight">IRO AI</h1>
                 </div>
 
-                <!-- Barra de Chat Especial (Tools) -->
                 <div class="w-full max-w-2xl mb-10 animate-slide-up relative z-30">
                     <div class="bg-white border border-gray-300 rounded-2xl shadow-sm hover:shadow-md transition-all relative min-h-[140px] flex flex-col">
-                        
-                        <!-- Input Area -->
                         <textarea placeholder="Escribe tu idea o usa una herramienta..." class="w-full bg-transparent border-none outline-none text-black placeholder-gray-400 resize-none font-light font-inter text-lg leading-relaxed flex-1 p-4 pb-12 custom-scrollbar"></textarea>
-
-                        <!-- Bottom Actions Bar -->
                         <div class="absolute bottom-2 left-2 right-2 flex justify-between items-center">
-                            <!-- Botón Adjuntar (Izquierda) -->
                             <button id="btn-tools-attach" class="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-xl transition-colors">
                                 <i data-lucide="paperclip" width="16" height="16"></i>
                             </button>
-
-                            <!-- Right Group (Agents + Send) -->
                             <div class="flex items-center gap-1">
                                 <button id="btn-tools-agents" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
                                     <i data-lucide="brain" width="16" height="16"></i>
@@ -238,31 +261,33 @@
                                 </button>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
-                <!-- Grid de Tarjetas -->
-                <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-slide-up" style="animation-delay: 0.1s;" id="cards-grid">
-                    <!-- Cards Generadas por JS -->
-                </div>
-                
+                <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-slide-up" style="animation-delay: 0.1s;" id="cards-grid"></div>
                 <div class="h-12 w-full shrink-0"></div>
             </div>
         </div>
 
-        <!-- Componentes Flotantes Comunes -->
-        <div id="history-view" class="hidden absolute top-16 left-4 md:left-20 w-[400px] bg-white/95 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl flex-col p-4 z-40 transition-all duration-300 max-h-[600px]">
-             <div class="flex items-center justify-between mb-4 shrink-0">
-                <div class="flex items-center gap-2"><button id="btn-history-expand" class="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-black transition-colors" title="Expandir"><i data-lucide="maximize-2" width="18" height="18"></i></button><h2 class="font-bold text-lg text-black">Historial</h2></div>
-                <button id="btn-history-close" class="p-2 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg transition-colors"><i data-lucide="x" width="18" height="18"></i></button>
+        <!-- Componente Historial Mejorado (Overlay Completo) -->
+        <div id="history-view" class="hidden absolute inset-0 z-50 bg-white/95 backdrop-blur-md flex-col p-4 md:p-8 animate-fade-in transition-all">
+             <div class="flex items-center justify-between mb-6 shrink-0 w-full max-w-4xl mx-auto">
+                <h2 class="font-bold text-2xl text-black font-dm-sans">Tu Historial</h2>
+                <button id="btn-history-close" class="p-2 hover:bg-gray-100 text-black rounded-full transition-colors"><i data-lucide="x" width="24" height="24"></i></button>
             </div>
-            <div class="relative mb-4 shrink-0"><i data-lucide="search" width="16" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" placeholder="Buscar en tus chats..." class="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-black/20 focus:bg-white transition-all font-inter"></div>
-            <div id="history-list-content" class="flex-1 overflow-y-auto custom-scrollbar pr-1 space-y-2 max-h-[400px]"></div>
+            
+            <div class="w-full max-w-4xl mx-auto relative mb-6 shrink-0">
+                <i data-lucide="search" width="18" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="history-search" placeholder="Buscar conversaciones antiguas..." class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-base outline-none focus:border-black/20 focus:bg-white transition-all font-inter shadow-sm">
+            </div>
+
+            <div id="history-list-content" class="flex-1 w-full max-w-4xl mx-auto overflow-y-auto custom-scrollbar space-y-3 pb-8">
+                <!-- Aquí se inyectan los chats reales -->
+                <div class="text-center text-gray-400 mt-10">No tienes chats guardados aún.</div>
+            </div>
         </div>
 
-        <!-- INPUT STANDARD (Se mueve en el DOM) -->
-        <div id="main-input-wrapper" class="w-full relative mb-[25px] md:mb-0 md:-translate-y-[17.5px]">
+        <!-- INPUT STANDARD -->
+        <div id="main-input-wrapper" class="w-full relative mb-[25px] md:mb-0 md:-translate-y-[27.5px]">
             <div id="plus-menu-mobile" class="hidden md:hidden fixed bottom-0 left-0 w-full bg-white rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[70] animate-slide-up-panel flex flex-col max-h-[70vh]">
                 <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mt-3 mb-4"></div>
                 <div class="px-5 pb-6 overflow-y-auto custom-scrollbar">
@@ -272,30 +297,43 @@
                             <button onclick="triggerFileSelect('image')" class="flex flex-col items-center gap-1.5 group p-1"><div class="w-12 h-12 bg-purple-50 border border-purple-100 rounded-xl flex items-center justify-center text-purple-600 group-active:scale-95 transition-transform"><i data-lucide="image" width="20"></i></div><span class="text-[10px] font-medium text-gray-600">Fotos</span></button>
                             <button onclick="triggerFileSelect('video')" class="flex flex-col items-center gap-1.5 group p-1"><div class="w-12 h-12 bg-pink-50 border border-pink-100 rounded-xl flex items-center justify-center text-pink-600 group-active:scale-95 transition-transform"><i data-lucide="clapperboard" width="20"></i></div><span class="text-[10px] font-medium text-gray-600">Video</span></button>
                         </div>
-                        <div class="w-px bg-gray-100 h-14 mx-1 my-auto"></div>
-                        <div class="flex gap-2 overflow-x-auto hide-scrollbar flex-1 items-center h-16" id="mobile-gallery-scroll">
-                            <button onclick="triggerGalleryLoad()" class="w-12 h-12 rounded-xl bg-gray-100 shrink-0 border border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-colors"><i data-lucide="plus" width="20"></i></button>
-                        </div>
                     </div>
-                    <div class="h-px bg-gray-100 w-full mb-4"></div>
-                    <div><h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Herramientas IA</h4><div class="grid grid-cols-4 gap-2" id="mobile-tools-grid"></div></div>
                 </div>
             </div>
 
             <div class="flex items-end md:items-center gap-2 relative">
-                <button id="btn-plus" class="p-2.5 md:p-2 text-black md:text-gray-400 hover:text-black bg-gray-100 md:bg-transparent rounded-full hover:bg-gray-200 md:hover:bg-gray-100 transition-all shrink-0 md:absolute md:left-[24px] md:top-1/2 md:-translate-y-1/2 md:z-10 shadow-sm md:shadow-none">
-                    <i data-lucide="plus" width="20" height="20" class="md:w-5 md:h-5 transition-transform duration-200"></i>
+                <button id="btn-plus" class="p-2.5 md:p-3 text-black md:text-gray-400 hover:text-black bg-gray-100 md:bg-transparent rounded-full hover:bg-gray-200 md:hover:bg-gray-100 transition-all shrink-0 md:absolute md:left-[24px] md:top-1/2 md:-translate-y-1/2 md:z-10 shadow-sm md:shadow-none">
+                    <i data-lucide="paperclip" width="20" height="20" class="md:w-5 md:h-5 transition-transform duration-200"></i>
                 </button>
-                <div id="input-container" class="flex-1 bg-gray-50 md:bg-white border border-gray-300 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-md transition-all focus-within:shadow-lg focus-within:border-gray-400 p-1.5 pl-4 md:p-2 md:pl-16 relative flex items-end md:items-center">
-                    <textarea id="chat-textarea" rows="1" placeholder="Comienza a charlar..." class="w-full bg-transparent border-none outline-none text-black placeholder-gray-400 resize-none font-light font-inter transition-all duration-300 custom-scrollbar text-lg leading-relaxed max-h-[150px] py-1.5 md:py-2 mb-0.5" style="min-height: 24px;"></textarea>
-                    <button id="btn-send" disabled class="p-2 ml-1 rounded-full bg-black text-white hover:bg-gray-900 disabled:bg-gray-200 disabled:text-gray-400 transition-all shadow-md active:scale-95 shrink-0 mb-0.5 md:mb-0">
-                        <i data-lucide="arrow-up" width="18" height="18" class="md:w-5 md:h-5"></i>
+                
+                <div id="input-container" class="flex-1 bg-gray-50 md:bg-white border border-gray-300 rounded-[2rem] md:rounded-[2rem] shadow-sm hover:shadow-md transition-all focus-within:shadow-lg focus-within:border-gray-400 p-1.5 pl-4 md:p-4 md:pl-16 relative flex items-center">
+                    <textarea id="chat-textarea" rows="1" placeholder="Comienza a charlar..." class="w-full bg-transparent border-none outline-none text-black placeholder-gray-400 resize-none font-light font-inter transition-all duration-300 custom-scrollbar text-lg leading-relaxed max-h-[150px] py-1" style="min-height: 24px;"></textarea>
+                    
+                    <div class="relative flex items-center mr-1">
+                        <button id="btn-model-menu" class="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-black hover:bg-gray-100 px-2 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                            <span id="selected-model-name">IRO v.9</span>
+                            <i data-lucide="chevron-up" width="16" height="16" id="model-menu-icon" stroke-width="1.8"></i>
+                        </button>
+                        <div id="model-menu" class="hidden absolute bottom-full right-0 mb-2 w-56 bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-1 animate-zoom-in">
+                            <button onclick="selectModel('IRO v.9')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-100 transition-colors bg-black text-white">IRO v.9</button>
+                            <button onclick="selectModel('GPT-5.2')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center justify-between hover:bg-gray-100 transition-colors group text-black">GPT-5.2 <i data-lucide="lock" width="12" class="text-gray-400 group-hover:text-black"></i></button>
+                            <button onclick="selectModel('Gemini 3')" class="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center justify-between hover:bg-gray-100 transition-colors group text-black"><span class="flex items-center gap-2">Gemini 3 <span class="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">NUEVO</span></span> <i data-lucide="lock" width="12" class="text-gray-400 group-hover:text-black"></i></button>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleReadAloud()" id="btn-read-aloud" class="p-2 mr-1 rounded-full transition-all bg-gray-200 text-gray-400 cursor-not-allowed" disabled>
+                        <i data-lucide="audio-lines" width="20" height="20" class="md:w-5 md:h-5"></i>
+                    </button>
+
+                    <button id="btn-send" onclick="handleSendClick()" disabled class="p-2 ml-1 rounded-full bg-black text-white hover:bg-gray-900 disabled:bg-gray-200 disabled:text-gray-400 transition-all shadow-md active:scale-95 shrink-0 flex items-center justify-center">
+                        <i id="send-icon" data-lucide="arrow-up" width="18" height="18" class="md:w-5 md:h-5"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="quick-actions" class="flex flex-wrap justify-center gap-2 mt-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s; opacity: 1;"></div>
+        <!-- Quick Actions -->
+        <div id="quick-actions" class="hidden md:flex flex-wrap justify-center gap-2 mt-6 opacity-0 animate-fade-in transform -translate-y-[4.5px]" style="animation-delay: 0.2s; opacity: 1;"></div>
     </div>
 
     <!-- PREVIEW MODAL -->
@@ -306,18 +344,164 @@
     </div>
 
     <script>
+        // --- GESTIÓN DE ESTADO Y STORAGE ---
         const state = {
-            isSidebarCollapsed: false, isModelMenuOpen: false, isExtrasOpen: false, isPlusMenuOpen: false, isHistoryOpen: false, isHistoryExpanded: false, messages: [], currentModel: 'IRO v.9', pendingFile: null,
-            currentView: 'standard', // 'standard' | 'tools'
-            isAgentsMenuOpen: false, isToolsAttachOpen: false
+            isSidebarCollapsed: true, 
+            isModelMenuOpen: false, 
+            isExtrasOpen: false, 
+            isPlusMenuOpen: false, 
+            isHistoryOpen: false, 
+            messages: [], 
+            currentModel: 'IRO v.9', 
+            pendingFile: null,
+            currentView: 'standard', 
+            isAgentsMenuOpen: false, 
+            isToolsAttachOpen: false,
+            isIroMenuOpen: false,
+            isReadAloud: false, 
+            isGenerating: false,
+            currentChatId: null, // ID del chat actual
+            chatHistory: [] // Array de metadatos de chats
         };
 
+        let abortController = null;
+
+        // Init Storage
+        function initStorage() {
+            const savedHistory = localStorage.getItem('iro_chat_history');
+            if (savedHistory) {
+                state.chatHistory = JSON.parse(savedHistory);
+            }
+            // Crear ID inicial si no hay
+            startNewSession();
+        }
+
+        function startNewSession() {
+            state.currentChatId = Date.now().toString(); // ID simple basado en tiempo
+            state.messages = [];
+        }
+
+        function saveCurrentChat() {
+            if (state.messages.length === 0) return;
+
+            // Busca si ya existe en historial
+            const existingIndex = state.chatHistory.findIndex(c => c.id === state.currentChatId);
+            
+            // Titulo basado en primer mensaje (max 30 chars)
+            let title = "Nuevo Chat";
+            if (state.messages.length > 0) {
+                const firstMsg = state.messages.find(m => m.role === 'user');
+                if (firstMsg) {
+                    title = firstMsg.content.replace(/\[.*?\]/g, '').trim().substring(0, 30) || "Imagen/Archivo";
+                }
+            }
+
+            const chatData = {
+                id: state.currentChatId,
+                title: existingIndex !== -1 ? state.chatHistory[existingIndex].title : title,
+                date: new Date().toLocaleDateString(),
+                preview: state.messages[state.messages.length - 1].content.substring(0, 50) + "...",
+                messages: state.messages
+            };
+
+            if (existingIndex !== -1) {
+                state.chatHistory[existingIndex] = chatData;
+            } else {
+                state.chatHistory.unshift(chatData); // Agregar al principio
+            }
+
+            localStorage.setItem('iro_chat_history', JSON.stringify(state.chatHistory));
+            renderHistoryList();
+        }
+
+        function loadChat(id) {
+            const chat = state.chatHistory.find(c => c.id === id);
+            if (chat) {
+                state.currentChatId = chat.id;
+                state.messages = chat.messages || [];
+                
+                // Limpiar UI
+                document.getElementById('messages-list').innerHTML = '';
+                
+                // Re-renderizar mensajes
+                state.messages.forEach(msg => addMessage(msg.role === 'user' ? 'user' : 'ai', msg.content, false)); // false = no scroll animation delay
+                
+                updateLayout();
+                toggleHistoryView(false); // Cerrar historial
+            }
+        }
+
+        function deleteChat(id, e) {
+            e.stopPropagation();
+            if(confirm("¿Seguro que quieres borrar este chat?")) {
+                state.chatHistory = state.chatHistory.filter(c => c.id !== id);
+                localStorage.setItem('iro_chat_history', JSON.stringify(state.chatHistory));
+                renderHistoryList();
+                if(state.currentChatId === id) resetChat(); // Si borras el actual, resetea
+            }
+        }
+
+        function shareChat(id, e) {
+            e.stopPropagation();
+            // Simulación de compartir
+            const chat = state.chatHistory.find(c => c.id === id);
+            const dummyLink = `https://iro.ai/share/${id}`;
+            alert(`Link generado y copiado al portapapeles:\n${dummyLink}\n\n(Cualquiera con este link podrá ver el chat "${chat.title}")`);
+        }
+        
+        function renameChat(id, e) {
+            e.stopPropagation();
+            const newName = prompt("Nuevo nombre para el chat:");
+            if (newName && newName.trim() !== "") {
+                const chat = state.chatHistory.find(c => c.id === id);
+                if (chat) {
+                    chat.title = newName;
+                    localStorage.setItem('iro_chat_history', JSON.stringify(state.chatHistory));
+                    renderHistoryList();
+                }
+            }
+        }
+
+        function renderHistoryList() {
+            const container = document.getElementById('history-list-content');
+            if (state.chatHistory.length === 0) {
+                container.innerHTML = '<div class="flex flex-col items-center justify-center py-20 opacity-50"><i data-lucide="message-square-dashed" width="48" class="mb-4 text-gray-300"></i><p class="text-gray-400">No hay historial aún.</p></div>';
+                initIcons();
+                return;
+            }
+
+            const term = document.getElementById('history-search').value.toLowerCase();
+            const filtered = state.chatHistory.filter(c => c.title.toLowerCase().includes(term));
+
+            container.innerHTML = filtered.map(chat => `
+                <div onclick="loadChat('${chat.id}')" class="w-full bg-white border border-gray-100 p-4 rounded-xl hover:shadow-md hover:border-gray-200 transition-all cursor-pointer group flex items-center justify-between animate-fade-in relative overflow-hidden">
+                    <div class="flex items-center gap-4 overflow-hidden">
+                        <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 text-gray-500 group-hover:bg-black group-hover:text-white transition-colors">
+                            <i data-lucide="message-square" width="18"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="font-bold text-sm text-gray-800 truncate pr-2 group-hover:text-black transition-colors" title="${chat.title}">${chat.title}</h3>
+                            <p class="text-xs text-gray-400 truncate">${chat.date} · ${chat.preview}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity absolute right-4 bg-white/80 backdrop-blur-sm pl-2">
+                        <button onclick="shareChat('${chat.id}', event)" class="p-2 hover:bg-blue-50 text-gray-400 hover:text-blue-600 rounded-lg transition-colors" title="Compartir Link"><i data-lucide="share-2" width="14"></i></button>
+                        <button onclick="renameChat('${chat.id}', event)" class="p-2 hover:bg-gray-100 text-gray-400 hover:text-black rounded-lg transition-colors" title="Renombrar"><i data-lucide="edit-2" width="14"></i></button>
+                        <button onclick="deleteChat('${chat.id}', event)" class="p-2 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg transition-colors" title="Borrar"><i data-lucide="trash-2" width="14"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            initIcons();
+        }
+
+        // --- Configuración Inicial ---
         const sidebarItems = [
             { icon: 'plus', label: 'Nuevo Chat', action: 'newChat' },
             { icon: 'search', label: 'Buscar Chats', action: 'search' },
             { icon: 'archive', label: 'Proyectos', action: 'projects' },
             { icon: 'brain', label: 'Agentes', action: 'agents' },
-            { icon: 'layout-grid', label: 'Más herramientas', action: 'moreTools' }, // NEW
+            { icon: 'layout-grid', label: 'Más herramientas', action: 'moreTools' }, 
             { icon: 'history', label: 'Historial', action: 'toggleHistory' }
         ];
 
@@ -341,12 +525,15 @@
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
+            initStorage(); // Cargar historial
             marked.use({ breaks: true });
             initIcons();
-            renderSidebar();
+            renderSidebar(); 
+            setSidebar(true); 
+
             renderExtras();
             renderQuickActions();
-            renderHistoryItems();
+            // renderHistoryItems(); // Ya no se usa la versión simple
             renderTools();
             renderCards();
             renderAdvancedTools();
@@ -358,203 +545,165 @@
             const textarea = document.getElementById('chat-textarea');
             textarea.addEventListener('input', function() {
                 this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';
-                const container = document.getElementById('input-container');
-                if (this.scrollHeight > 50 && window.innerWidth >= 768) { container.classList.remove('md:rounded-3xl'); container.classList.add('md:rounded-2xl'); } else { container.classList.add('md:rounded-3xl'); container.classList.remove('md:rounded-2xl'); }
-                document.getElementById('btn-send').disabled = this.value.trim() === "";
-                const qa = document.getElementById('quick-actions');
-                if(this.value.trim().length > 0) qa.classList.add('hidden'); else if(state.messages.length === 0) qa.classList.remove('hidden');
+                updateInputUI(this.value.trim()); 
             });
-            textarea.addEventListener('keydown', (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+            textarea.addEventListener('keydown', (e) => { 
+                if(e.key === 'Enter' && !e.shiftKey) { 
+                    e.preventDefault(); 
+                    if(!document.getElementById('btn-send').disabled) handleSendClick(); 
+                } 
+            });
+            
+            document.getElementById('history-search').addEventListener('input', renderHistoryList);
 
-            // File inputs
             ['generic','image','video','gallery'].forEach(id => document.getElementById('file-input-'+id).addEventListener('change', id === 'file-input-gallery' ? handleGalleryLoad : handleFileSelect));
 
             setupButtons();
             window.addEventListener('resize', () => { if(state.isPlusMenuOpen && window.innerWidth >= 768) updatePCMenuPosition(); if(state.messages.length === 0 && state.currentView === 'standard') updateLayout(); });
         });
 
+        function updateInputUI(text) {
+            const sendBtn = document.getElementById('btn-send');
+            const readBtn = document.getElementById('btn-read-aloud');
+            const qa = document.getElementById('quick-actions');
+
+            if (state.isGenerating) {
+                sendBtn.disabled = false;
+            } else {
+                sendBtn.disabled = text === "";
+            }
+
+            if (text.length > 0) {
+                readBtn.disabled = false;
+                readBtn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
+                if (state.isReadAloud) {
+                    readBtn.classList.add('bg-blue-600', 'text-white');
+                    readBtn.classList.remove('bg-black');
+                } else {
+                    readBtn.classList.add('bg-black', 'text-white');
+                    readBtn.classList.remove('bg-blue-600');
+                }
+            } else {
+                readBtn.disabled = true;
+                readBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
+                readBtn.classList.remove('bg-black', 'bg-blue-600', 'text-white');
+            }
+
+            if(text.length > 0) qa.classList.add('hidden'); else if(state.messages.length === 0) qa.classList.remove('hidden');
+        }
+
+        function toggleReadAloud() {
+            state.isReadAloud = !state.isReadAloud;
+            const readBtn = document.getElementById('btn-read-aloud');
+            if (state.isReadAloud) {
+                readBtn.classList.remove('bg-black');
+                readBtn.classList.add('bg-blue-600');
+            } else {
+                readBtn.classList.remove('bg-blue-600');
+                readBtn.classList.add('bg-black');
+            }
+        }
+
         function setupButtons() {
-            document.getElementById('btn-model-menu').addEventListener('click', (e) => { e.stopPropagation(); if(!state.isModelMenuOpen) closeAllMenusExcept('model-menu'); toggleState('isModelMenuOpen', 'model-menu'); });
+            document.getElementById('btn-model-menu').addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                if(!state.isModelMenuOpen) closeAllMenusExcept('model-menu'); 
+                toggleState('isModelMenuOpen', 'model-menu'); 
+            });
+
+            document.getElementById('btn-iro-menu').addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                if(!state.isIroMenuOpen) closeAllMenusExcept('iro-menu'); 
+                toggleState('isIroMenuOpen', 'iro-menu-content'); 
+                const icon = document.getElementById('iro-menu-icon');
+                if(state.isIroMenuOpen) icon.classList.add('rotate-180'); else icon.classList.remove('rotate-180');
+            });
+
             document.getElementById('btn-extras-menu').addEventListener('click', (e) => { e.stopPropagation(); if(!state.isExtrasOpen) closeAllMenusExcept('extras-menu'); toggleState('isExtrasOpen', 'extras-menu'); });
-            document.getElementById('btn-collapse').addEventListener('click', () => { if(window.innerWidth < 768) closeMobileSidebar(); else setSidebar(true); });
-            document.getElementById('btn-expand').addEventListener('click', () => { if(window.innerWidth < 768) { openMobileSidebar(); setSidebar(false); } else { setSidebar(false); } });
+            
+            document.getElementById('btn-collapse').addEventListener('click', () => { 
+                if(window.innerWidth < 768) { closeMobileSidebar(); } else { setSidebar(true); }
+            });
+            document.getElementById('btn-expand').addEventListener('click', () => { 
+                if(window.innerWidth < 768) { openMobileSidebar(); setSidebar(false); } else { setSidebar(false); } 
+            });
             document.getElementById('btn-mobile-sidebar').addEventListener('click', openMobileSidebar);
             document.getElementById('mobile-overlay').addEventListener('click', closeMobileSidebar);
+            
             document.getElementById('btn-plus').addEventListener('click', (e) => { 
                 e.stopPropagation();
                 if(state.isPlusMenuOpen) { closeAllMenusExcept(null); return; }
-                if(window.innerWidth < 768) { closeAllMenusExcept('plus-menu'); document.getElementById('plus-menu-mobile').classList.remove('hidden'); document.getElementById('plus-menu-overlay').classList.remove('hidden'); state.isPlusMenuOpen = true; }
-                else { closeAllMenusExcept('plus-menu'); document.getElementById('plus-menu-desktop').classList.remove('hidden'); document.querySelector('#btn-plus svg').classList.add('rotate-45'); state.isPlusMenuOpen = true; updatePCMenuPosition(); }
+                if(window.innerWidth < 768) { closeAllMenusExcept('plus-menu'); document.getElementById('plus-menu-mobile').classList.remove('hidden'); document.getElementById('mobile-overlay').classList.remove('hidden'); state.isPlusMenuOpen = true; }
+                else { closeAllMenusExcept('plus-menu'); document.getElementById('plus-menu-desktop').classList.remove('hidden'); state.isPlusMenuOpen = true; updatePCMenuPosition(); }
             });
-            document.getElementById('btn-send').addEventListener('click', sendMessage);
+            
             document.getElementById('btn-history-close').addEventListener('click', () => toggleHistoryView(false));
-            document.getElementById('btn-history-expand').addEventListener('click', toggleHistoryExpand);
-
-            // Tools View Buttons
+            
             document.getElementById('btn-tools-agents').addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeAllMenusExcept('agents-menu');
-                const menu = document.getElementById('agents-menu');
-                const btn = document.getElementById('btn-tools-agents');
-                const rect = btn.getBoundingClientRect();
-                menu.style.left = (rect.left - 150) + 'px'; // adjust pos
-                menu.style.top = (rect.bottom + 10) + 'px';
+                e.stopPropagation(); closeAllMenusExcept('agents-menu');
+                const menu = document.getElementById('agents-menu'); const btn = document.getElementById('btn-tools-agents'); const rect = btn.getBoundingClientRect();
+                menu.style.left = (rect.left - 150) + 'px'; menu.style.top = (rect.bottom + 10) + 'px';
                 toggleState('isAgentsMenuOpen', 'agents-menu');
             });
 
             document.getElementById('btn-tools-attach').addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeAllMenusExcept('tools-attach-menu');
-                const menu = document.getElementById('tools-attach-menu');
-                const btn = document.getElementById('btn-tools-attach');
-                const rect = btn.getBoundingClientRect();
-                menu.style.left = rect.left + 'px';
-                menu.style.top = (rect.bottom + 10) + 'px';
+                e.stopPropagation(); closeAllMenusExcept('tools-attach-menu');
+                const menu = document.getElementById('tools-attach-menu'); const btn = document.getElementById('btn-tools-attach'); const rect = btn.getBoundingClientRect();
+                menu.style.left = rect.left + 'px'; menu.style.top = (rect.bottom + 10) + 'px';
                 toggleState('isToolsAttachOpen', 'tools-attach-menu');
             });
         }
 
-        // --- NEW VIEW LOGIC ---
-        function handleSidebarAction(action) {
-            if (action === 'newChat') { state.currentView = 'standard'; resetChat(); switchView('standard'); }
-            if (action === 'toggleHistory') toggleHistoryView(true);
-            if (action === 'moreTools') { state.currentView = 'tools'; switchView('tools'); }
-            if(window.innerWidth < 768) closeMobileSidebar();
-        }
-
-        function switchView(viewName) {
-            const standard = document.getElementById('standard-view');
-            const tools = document.getElementById('tools-view');
-            
-            if (viewName === 'standard') {
-                standard.classList.remove('hidden');
-                tools.classList.add('hidden');
+        function handleSendClick() {
+            if (state.isGenerating) {
+                // STOP Logic
+                if (abortController) abortController.abort();
+                window.speechSynthesis.cancel();
+                state.isGenerating = false;
+                
+                const sendIcon = document.getElementById('send-icon');
+                sendIcon.setAttribute('data-lucide', 'arrow-up');
+                sendIcon.removeAttribute('fill');
+                const l = document.getElementById('ai-loader');
+                l.classList.add('hidden'); l.classList.remove('flex');
+                initIcons();
             } else {
-                standard.classList.add('hidden');
-                tools.classList.remove('hidden');
-                tools.classList.add('flex');
+                sendMessage();
             }
         }
 
-        // --- AGENT LOGIC ---
-        function selectAgent(id) {
-            console.log("Agent selected:", id);
-            closeAllMenusExcept(null);
-        }
-
-        function handleLockedAgent() {
-            closeAllMenusExcept(null);
-            // Open sidebar if closed
-            if (state.isSidebarCollapsed) setSidebar(false);
-            if (window.innerWidth < 768) openMobileSidebar();
-
-            // Highlight Download PC button
-            const btn = document.getElementById('btn-download-pc');
-            btn.classList.add('bg-gray-200', 'ring-2', 'ring-gray-300');
-            setTimeout(() => {
-                btn.classList.remove('bg-gray-200', 'ring-2', 'ring-gray-300');
-            }, 1000);
-        }
-
-        // --- RENDERERS ---
-        function renderCards() {
-            const container = document.getElementById('cards-grid');
-            container.innerHTML = cardsData.map(c => `
-                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
-                    <div class="h-24 bg-gray-100 overflow-hidden">
-                        <img src="${c.img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    </div>
-                    <div class="p-3">
-                        <h3 class="font-bold text-sm text-black mb-1">${c.title}</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed">${c.desc}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderAdvancedTools() {
-            const container = document.getElementById('tools-advanced-list');
-            container.innerHTML = advancedTools.map(t => `
-                <button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-3 text-[12px] font-medium text-black transition-colors group">
-                    <div class="text-gray-400 group-hover:text-black"><i data-lucide="${t.icon}" width="14"></i></div> ${t.label}
-                </button>
-            `).join('');
-            initIcons();
-        }
-
-        // --- (Rest of standard functions kept intact) ---
-        function updatePCMenuPosition() {
-            const btn = document.getElementById('btn-plus');
-            const menu = document.getElementById('plus-menu-desktop');
-            if(!btn || !menu) return;
-            const rect = btn.getBoundingClientRect();
-            menu.style.left = rect.left + 'px';
-            menu.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
-        }
-
-        function closeAllMenusExcept(exceptId) {
-            if(exceptId !== 'model-menu' && state.isModelMenuOpen) toggleState('isModelMenuOpen', 'model-menu');
-            if(exceptId !== 'extras-menu' && state.isExtrasOpen) toggleState('isExtrasOpen', 'extras-menu');
-            if(exceptId !== 'plus-menu' && state.isPlusMenuOpen) {
-                if(window.innerWidth < 768) { closePlusMenuMobile(); } else { document.getElementById('plus-menu-desktop').classList.add('hidden'); document.querySelector('#btn-plus svg').classList.remove('rotate-45'); }
-                state.isPlusMenuOpen = false;
-            }
-            // Close Tools View Menus
-            if(exceptId !== 'agents-menu' && state.isAgentsMenuOpen) toggleState('isAgentsMenuOpen', 'agents-menu');
-            if(exceptId !== 'tools-attach-menu' && state.isToolsAttachOpen) toggleState('isToolsAttachOpen', 'tools-attach-menu');
-
-            const overlay = document.getElementById('plus-menu-overlay');
-            if(exceptId === 'plus-menu' && window.innerWidth < 768) overlay.classList.remove('hidden');
-            else if (exceptId === null) {
-                overlay.classList.add('hidden');
-                document.getElementById('global-click-overlay').classList.add('hidden');
-            }
-        }
-
-        function handleGlobalClick(e) {
-            // General closer wrapper
-            if (state.isModelMenuOpen && !e.target.closest('#model-menu') && !e.target.closest('#btn-model-menu')) toggleState('isModelMenuOpen', 'model-menu');
-            if (state.isExtrasOpen && !e.target.closest('#extras-menu') && !e.target.closest('#btn-extras-menu')) toggleState('isExtrasOpen', 'extras-menu');
-            if (state.isPlusMenuOpen && window.innerWidth >= 768 && !e.target.closest('#plus-menu-desktop') && !e.target.closest('#btn-plus')) closeAllMenusExcept(null);
-            
-            // Tools view closers
-            if (state.isAgentsMenuOpen && !e.target.closest('#agents-menu') && !e.target.closest('#btn-tools-agents')) toggleState('isAgentsMenuOpen', 'agents-menu');
-            if (state.isToolsAttachOpen && !e.target.closest('#tools-attach-menu') && !e.target.closest('#btn-tools-attach')) toggleState('isToolsAttachOpen', 'tools-attach-menu');
-        }
-
-        // --- STANDARD UTILS (Copy/Paste from previous versions) ---
-        function initIcons() { lucide.createIcons(); }
-        function toggleState(key, domId) { state[key] = !state[key]; const el = document.getElementById(domId); state[key] ? el.classList.remove('hidden') : el.classList.add('hidden'); }
-        function openMobileSidebar() { const s = document.getElementById('sidebar'); const o = document.getElementById('mobile-overlay'); s.classList.remove('hidden'); requestAnimationFrame(() => s.classList.add('flex')); o.classList.remove('hidden'); }
-        function closeMobileSidebar() { const s = document.getElementById('sidebar'); const o = document.getElementById('mobile-overlay'); s.classList.add('hidden'); s.classList.remove('flex'); o.classList.add('hidden'); }
-        function setSidebar(c) { state.isSidebarCollapsed = c; const s = document.getElementById('sidebar'), h = document.getElementById('sidebar-header'), ch = document.getElementById('collapsed-header'), ls = document.querySelectorAll('.sidebar-label'), is = document.querySelectorAll('.sidebar-item'); if(c) { s.classList.remove('w-[255px]'); s.classList.add('w-[70px]'); h.classList.add('hidden'); ch.classList.remove('hidden'); ch.classList.add('flex'); ls.forEach(l => l.classList.add('hidden')); is.forEach(i => { i.classList.add('justify-center'); i.classList.remove('px-3'); }); } else { s.classList.add('w-[255px]'); s.classList.remove('w-[70px]'); h.classList.remove('hidden'); ch.classList.add('hidden'); ch.classList.remove('flex'); ls.forEach(l => l.classList.remove('hidden')); is.forEach(i => { i.classList.remove('justify-center'); i.classList.add('px-3'); }); } }
-        function toggleHistoryView(show) { state.isHistoryOpen = show; const v = document.getElementById('history-view'); show ? (v.classList.remove('hidden'), v.classList.add('flex')) : (v.classList.add('hidden'), v.classList.remove('flex')); if(!show && state.isHistoryExpanded) toggleHistoryExpand(); }
-        function toggleHistoryExpand() { state.isHistoryExpanded = !state.isHistoryExpanded; const v = document.getElementById('history-view'); if(state.isHistoryExpanded) { v.className = "flex absolute inset-0 z-50 bg-white flex-col p-6 rounded-none animate-fade-in"; document.getElementById('btn-history-expand').innerHTML = '<i data-lucide="minimize-2" width="18" height="18"></i>'; document.getElementById('history-list-content').classList.remove('max-h-[400px]'); } else { v.className = "flex absolute top-16 left-4 md:left-20 w-[400px] bg-white/95 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl flex-col p-4 z-40 transition-all duration-300 max-h-[600px]"; document.getElementById('btn-history-expand').innerHTML = '<i data-lucide="maximize-2" width="18" height="18"></i>'; document.getElementById('history-list-content').classList.add('max-h-[400px]'); } initIcons(); }
-        function setInput(t) { const tx = document.getElementById('chat-textarea'); tx.value = t; tx.focus(); tx.dispatchEvent(new Event('input')); }
-        function selectModel(n) { state.currentModel = n; document.getElementById('selected-model-name').innerText = n; toggleState('isModelMenuOpen', 'model-menu'); if(n.includes('GPT') || n.includes('Gemini')) document.getElementById('modal-overlay').classList.remove('hidden'); }
-        function closeModal() { document.getElementById('modal-overlay').classList.add('hidden'); }
-        function resetChat() { state.messages = []; document.getElementById('chat-textarea').value = ''; document.getElementById('chat-textarea').style.height = 'auto'; updateLayout(); }
-        function copyText(t) { const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.left = '-9999px'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} document.body.removeChild(ta); }
-        function regenerateResponse() { const l = document.getElementById('ai-loader'); l.classList.remove('hidden'); l.classList.add('flex'); scrollToBottom(); setTimeout(() => { l.classList.add('hidden'); l.classList.remove('flex'); addMessage('ai', "Respuesta regenerada."); }, 1000); }
-        function toggleFeedback(b, t) { if(b.classList.contains('text-black')) { b.classList.remove('text-black','bg-gray-100'); b.classList.add('text-gray-400'); } else { b.classList.remove('text-gray-400'); b.classList.add('text-black','bg-gray-100'); } }
-        
-        async function sendMessage() {
+        async function sendMessage(textOverride = null) {
             const tx = document.getElementById('chat-textarea');
-            const t = tx.value.trim();
+            const t = textOverride || tx.value.trim();
             if(!t) return;
 
-            tx.value = ''; 
-            tx.style.height = 'auto';
-            document.getElementById('btn-send').disabled = true;
+            window.speechSynthesis.cancel();
+            state.isGenerating = true;
+            abortController = new AbortController();
 
-            if(state.messages.length === 0) {
-                state.messages.push({role:'user',content:t});
-                updateLayout();
-            } else {
-                state.messages.push({role:'user',content:t});
-            }
+            tx.value = ''; tx.style.height = 'auto';
+            const sendBtn = document.getElementById('btn-send');
+            const sendIcon = document.getElementById('send-icon');
+            
+            sendIcon.setAttribute('data-lucide', 'square');
+            sendIcon.setAttribute('fill', 'currentColor'); 
+            initIcons();
+            
+            updateInputUI(''); 
+            sendBtn.disabled = false; 
 
-            addMessage('user', t);
+            // --- CORRECCIÓN AQUÍ: PRIMERO EL MENSAJE, LUEGO EL LAYOUT ---
+            const userMsg = {role:'user',content:t};
+            state.messages.push(userMsg);
+            
+            // Si es el primer mensaje, el estado ahora tiene length 1, por lo que updateLayout moverá todo
+            if(state.messages.length === 1) updateLayout();
+            
+            // Agregar mensaje visualmente
+            addMessage('user', t, true); // true = animate
+            
+            // GUARDAR AUTOMÁTICAMENTE
+            saveCurrentChat();
 
             const l = document.getElementById('ai-loader');
             l.classList.remove('hidden'); l.classList.add('flex');
@@ -564,62 +713,267 @@
                 const response = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    signal: abortController.signal,
                     body: JSON.stringify({
-                        messages: [
-                            { role: 'system', content: 'Eres IRO AI, un asistente inteligente y útil.' },
-                            ...state.messages.map(msg => ({
-                                role: msg.role === 'ai' ? 'assistant' : msg.role,
-                                content: msg.content
-                            }))
-                        ],
-                        model: 'openai',
-                        jsonMode: false
+                        messages: [ { role: 'system', content: 'Eres IRO AI, un asistente inteligente y útil.' }, ...state.messages.map(msg => ({ role: msg.role === 'ai' ? 'assistant' : msg.role, content: msg.content })) ],
+                        model: 'openai', jsonMode: false
                     })
                 });
-                
                 if (!response.ok) throw new Error('Network response was not ok');
                 const textData = await response.text();
                 
-                l.classList.add('hidden'); 
-                l.classList.remove('flex');
+                l.classList.add('hidden'); l.classList.remove('flex');
                 
-                addMessage('ai', textData);
-                state.messages.push({role: 'ai', content: textData});
+                addMessage('ai', textData, true);
+                const aiMsg = {role: 'ai', content: textData};
+                state.messages.push(aiMsg);
                 
+                // GUARDAR RESPUESTA
+                saveCurrentChat();
+
+                if(state.isReadAloud) {
+                    const u = new SpeechSynthesisUtterance(textData); u.lang = 'es-ES';
+                    window.speechSynthesis.speak(u);
+                }
             } catch (error) {
-                console.error("Error calling AI:", error);
-                l.classList.add('hidden'); 
-                l.classList.remove('flex');
-                addMessage('ai', "Lo siento, hubo un error al conectar con el servidor de IA.");
+                if (error.name === 'AbortError') {
+                    console.log('Fetch aborted');
+                } else {
+                    console.error("Error calling AI:", error);
+                    addMessage('ai', "Lo siento, hubo un error al conectar con el servidor de IA.", true);
+                }
+                l.classList.add('hidden'); l.classList.remove('flex');
+            } finally {
+                state.isGenerating = false;
+                sendIcon.setAttribute('data-lucide', 'arrow-up');
+                sendIcon.removeAttribute('fill');
+                initIcons();
+                updateInputUI(document.getElementById('chat-textarea').value.trim());
             }
         }
 
-        function addMessage(r, c) { const l = document.getElementById('messages-list'); const u = r === 'user'; const d = document.createElement('div'); d.className = `flex w-full ${u ? 'justify-end' : 'justify-start'} animate-fade-in`; let i = u ? `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-gray-100 shadow-sm bg-gray-100 text-black"><i data-lucide="user" width="20"></i></div>` : `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-gray-100 shadow-sm bg-white text-black"><img src="logo-negro.png" class="w-7 h-7 object-contain"></div>`; const pc = u ? c : marked.parse(c); const wc = u ? 'max-w-[50%]' : 'w-fit max-w-[45ch] md:max-w-[68ch]'; const b = `<div class="px-6 py-4 rounded-[1.5rem] text-base leading-relaxed tracking-wide shadow-sm ${u ? 'bg-gray-100 text-black rounded-tr-sm border border-gray-200' : 'bg-white text-black px-0 shadow-none border-transparent'} overflow-hidden ${wc}"><div class="prose prose-sm max-w-none break-words whitespace-pre-wrap ${u ? '' : 'font-light'}">${pc}</div></div>`; const ec = c.replace(/`/g, '\\`').replace(/"/g, '&quot;'); const a = !u ? `<div class="flex items-center gap-2 mt-2 justify-start pl-1"><button onclick="copyText(\`${ec}\`)" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="copy" width="14"></i></button><button onclick="regenerateResponse()" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="refresh-cw" width="14"></i></button><div class="h-4 w-px bg-gray-200 mx-1"></div><button onclick="toggleFeedback(this, 'like')" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="thumbs-up" width="14"></i></button><button onclick="toggleFeedback(this, 'dislike')" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="thumbs-down" width="14"></i></button></div>` : ''; d.innerHTML = `<div class="flex gap-4 ${u ? 'flex-row-reverse' : 'flex-row'} group w-full">${i}<div class="flex flex-col gap-1 ${u ? 'items-end' : 'items-start'} w-full">${b}${a}</div></div>`; l.appendChild(d); initIcons(); scrollToBottom(); }
+        // --- FUNCIONES CORE ---
+        function handleSidebarAction(action) {
+            if (action === 'newChat') { 
+                state.currentView = 'standard'; 
+                // GUARDA EL CHAT ACTUAL ANTES DE RESETEAR SI TIENE CONTENIDO
+                if(state.messages.length > 0) saveCurrentChat();
+                resetChat(); // Esto limpia la pantalla visualmente y crea nuevo ID
+                switchView('standard'); 
+            }
+            if (action === 'toggleHistory') toggleHistoryView(true);
+            if (action === 'moreTools') { state.currentView = 'tools'; switchView('tools'); }
+            if(window.innerWidth < 768) closeMobileSidebar();
+        }
+
+        function switchView(viewName) {
+            const standard = document.getElementById('standard-view');
+            const tools = document.getElementById('tools-view');
+            if (viewName === 'standard') { standard.classList.remove('hidden'); tools.classList.add('hidden'); } 
+            else { standard.classList.add('hidden'); tools.classList.remove('hidden'); tools.classList.add('flex'); }
+        }
+
+        function selectAgent(id) { console.log("Agent selected:", id); closeAllMenusExcept(null); }
+        function handleLockedAgent() { closeAllMenusExcept(null); if (state.isSidebarCollapsed) setSidebar(false); if (window.innerWidth < 768) openMobileSidebar(); const btn = document.getElementById('btn-download-app'); btn.classList.add('bg-gray-200', 'ring-2', 'ring-gray-300'); setTimeout(() => { btn.classList.remove('bg-gray-200', 'ring-2', 'ring-gray-300'); }, 1000); }
+
+        function renderCards() {
+            const container = document.getElementById('cards-grid');
+            container.innerHTML = cardsData.map(c => `
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                    <div class="h-24 bg-gray-100 overflow-hidden"><img src="${c.img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                    <div class="p-3"><h3 class="font-bold text-sm text-black mb-1">${c.title}</h3><p class="text-xs text-gray-500 leading-relaxed">${c.desc}</p></div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdvancedTools() {
+            const container = document.getElementById('tools-advanced-list');
+            container.innerHTML = advancedTools.map(t => `<button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-3 text-[12px] font-medium text-black transition-colors group"><div class="text-gray-400 group-hover:text-black"><i data-lucide="${t.icon}" width="14"></i></div> ${t.label}</button>`).join('');
+            initIcons();
+        }
+
+        function updatePCMenuPosition() {
+            const btn = document.getElementById('btn-plus'); const menu = document.getElementById('plus-menu-desktop');
+            if(!btn || !menu) return; const rect = btn.getBoundingClientRect();
+            menu.style.left = rect.left + 'px'; menu.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+        }
+
+        function closeAllMenusExcept(exceptId) {
+            if(exceptId !== 'model-menu' && state.isModelMenuOpen) toggleState('isModelMenuOpen', 'model-menu');
+            if(exceptId !== 'iro-menu' && state.isIroMenuOpen) {
+                 toggleState('isIroMenuOpen', 'iro-menu-content');
+                 document.getElementById('iro-menu-icon')?.classList.remove('rotate-180');
+            }
+            if(exceptId !== 'extras-menu' && state.isExtrasOpen) toggleState('isExtrasOpen', 'extras-menu');
+            if(exceptId !== 'plus-menu' && state.isPlusMenuOpen) {
+                if(window.innerWidth < 768) { closePlusMenuMobile(); } else { document.getElementById('plus-menu-desktop').classList.add('hidden'); }
+                state.isPlusMenuOpen = false;
+            }
+            if(exceptId !== 'agents-menu' && state.isAgentsMenuOpen) toggleState('isAgentsMenuOpen', 'agents-menu');
+            if(exceptId !== 'tools-attach-menu' && state.isToolsAttachOpen) toggleState('isToolsAttachOpen', 'tools-attach-menu');
+            
+            if(exceptId === null) { document.getElementById('global-click-overlay').classList.add('hidden'); document.getElementById('mobile-overlay').classList.add('hidden'); }
+        }
+
+        function handleGlobalClick(e) {
+            if (state.isModelMenuOpen && !e.target.closest('#model-menu') && !e.target.closest('#btn-model-menu')) toggleState('isModelMenuOpen', 'model-menu');
+            if (state.isIroMenuOpen && !e.target.closest('#iro-menu-content') && !e.target.closest('#btn-iro-menu')) {
+                 toggleState('isIroMenuOpen', 'iro-menu-content');
+                 document.getElementById('iro-menu-icon')?.classList.remove('rotate-180');
+            }
+            if (state.isExtrasOpen && !e.target.closest('#extras-menu') && !e.target.closest('#btn-extras-menu')) toggleState('isExtrasOpen', 'extras-menu');
+            if (state.isPlusMenuOpen && window.innerWidth >= 768 && !e.target.closest('#plus-menu-desktop') && !e.target.closest('#btn-plus')) closeAllMenusExcept(null);
+            if (state.isAgentsMenuOpen && !e.target.closest('#agents-menu') && !e.target.closest('#btn-tools-agents')) toggleState('isAgentsMenuOpen', 'agents-menu');
+            if (state.isToolsAttachOpen && !e.target.closest('#tools-attach-menu') && !e.target.closest('#btn-tools-attach')) toggleState('isToolsAttachOpen', 'tools-attach-menu');
+        }
+
+        function initIcons() { lucide.createIcons(); }
+        function toggleState(key, domId) { state[key] = !state[key]; const el = document.getElementById(domId); state[key] ? el.classList.remove('hidden') : el.classList.add('hidden'); }
+        function openMobileSidebar() { 
+            const s = document.getElementById('sidebar'); 
+            const o = document.getElementById('mobile-overlay'); 
+            s.classList.remove('hidden'); 
+            requestAnimationFrame(() => s.classList.add('flex')); 
+            o.classList.remove('hidden'); 
+            if(state.isSidebarCollapsed) setSidebar(false);
+        }
+        function closeMobileSidebar() { const s = document.getElementById('sidebar'); const o = document.getElementById('mobile-overlay'); s.classList.add('hidden'); s.classList.remove('flex'); o.classList.add('hidden'); }
+        
+        function setSidebar(c) { 
+            state.isSidebarCollapsed = c; 
+            const s = document.getElementById('sidebar'), h = document.getElementById('sidebar-header'), ch = document.getElementById('collapsed-header'), ls = document.querySelectorAll('.sidebar-label'), is = document.querySelectorAll('.sidebar-item'), uid = document.getElementById('user-id-display');
+            if(c) { 
+                s.classList.remove('w-[255px]'); s.classList.add('w-[70px]'); 
+                h.classList.add('hidden'); ch.classList.remove('hidden'); ch.classList.add('flex'); 
+                ls.forEach(l => l.classList.add('hidden')); 
+                is.forEach(i => { i.classList.add('justify-center'); i.classList.remove('px-3'); }); 
+                uid.classList.add('hidden');
+            } else { 
+                s.classList.add('w-[255px]'); s.classList.remove('w-[70px]'); 
+                h.classList.remove('hidden'); ch.classList.add('hidden'); ch.classList.remove('flex'); 
+                ls.forEach(l => l.classList.remove('hidden')); 
+                is.forEach(i => { i.classList.remove('justify-center'); i.classList.add('px-3'); }); 
+                uid.classList.remove('hidden');
+            } 
+        }
+
+        // --- HISTORIAL FULL SCREEN LOGIC ---
+        function toggleHistoryView(show) { 
+            state.isHistoryOpen = show; 
+            const v = document.getElementById('history-view'); 
+            if(show) {
+                renderHistoryList();
+                v.classList.remove('hidden'); 
+                v.classList.add('flex');
+            } else {
+                v.classList.add('hidden'); 
+                v.classList.remove('flex');
+            }
+        }
+        
+        function setInput(t) { const tx = document.getElementById('chat-textarea'); tx.value = t; tx.focus(); tx.dispatchEvent(new Event('input')); }
+        function selectModel(n) { state.currentModel = n; document.getElementById('selected-model-name').innerText = n; toggleState('isModelMenuOpen', 'model-menu'); }
+        function closeModal() { document.getElementById('modal-overlay').classList.add('hidden'); }
+        
+        // RESET REAL (LIMPIA DOM y STATE)
+        function resetChat() { 
+            startNewSession(); // Genera nuevo ID
+            document.getElementById('messages-list').innerHTML = ''; // Limpia DOM
+            document.getElementById('chat-textarea').value = ''; 
+            document.getElementById('chat-textarea').style.height = 'auto'; 
+            updateLayout(); 
+        }
+
+        function copyText(t) { const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.left = '-9999px'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} document.body.removeChild(ta); }
+        function regenerateResponse() { const l = document.getElementById('ai-loader'); l.classList.remove('hidden'); l.classList.add('flex'); scrollToBottom(); setTimeout(() => { l.classList.add('hidden'); l.classList.remove('flex'); addMessage('ai', "Respuesta regenerada.", true); }, 1000); }
+        function toggleFeedback(b, t) { if(b.classList.contains('text-black')) { b.classList.remove('text-black','bg-gray-100'); b.classList.add('text-gray-400'); } else { b.classList.remove('text-gray-400'); b.classList.add('text-black','bg-gray-100'); } }
+        
+        function speakText(btn) {
+            const msgWrapper = btn.closest('.group').querySelector('.prose');
+            if(msgWrapper) {
+                const text = msgWrapper.innerText; const u = new SpeechSynthesisUtterance(text); u.lang = 'es-ES'; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+            }
+        }
+
+        function addMessage(r, c, animate = true) { 
+            const l = document.getElementById('messages-list'); const u = r === 'user'; const d = document.createElement('div'); 
+            d.className = `flex w-full ${u ? 'justify-end' : 'justify-start'} ${animate ? 'animate-fade-in' : ''}`; 
+            let i = u ? `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-gray-100 shadow-sm bg-gray-100 text-black"><i data-lucide="user" width="20"></i></div>` : `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-gray-100 shadow-sm bg-white text-black"><img src="logo-negro.png" onerror="this.src='https://via.placeholder.com/28x28?text=I'" class="w-7 h-7 object-contain"></div>`; 
+            const pc = u ? c : marked.parse(c); const wc = u ? 'max-w-[50%]' : 'w-fit max-w-[45ch] md:max-w-[68ch]'; 
+            const b = `<div class="px-6 py-4 rounded-[1.5rem] text-base leading-relaxed tracking-wide shadow-sm ${u ? 'bg-gray-100 text-black rounded-tr-sm border border-gray-200' : 'bg-white text-black px-0 shadow-none border-transparent'} overflow-hidden ${wc}"><div class="prose prose-sm max-w-none break-words whitespace-pre-wrap ${u ? '' : 'font-light'}">${pc}</div></div>`; 
+            const ec = c.replace(/`/g, '\\`').replace(/"/g, '&quot;'); 
+            const a = !u ? `<div class="flex items-center gap-2 mt-2 justify-start pl-1"><button onclick="speakText(this)" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="volume-2" width="14"></i></button><button onclick="copyText(\`${ec}\`)" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="copy" width="14"></i></button><button onclick="regenerateResponse()" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="refresh-cw" width="14"></i></button><div class="h-4 w-px bg-gray-200 mx-1"></div><button onclick="toggleFeedback(this, 'like')" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="thumbs-up" width="14"></i></button><button onclick="toggleFeedback(this, 'dislike')" class="p-2 text-gray-400 hover:text-black rounded-lg transition-all hover:bg-gray-100"><i data-lucide="thumbs-down" width="14"></i></button></div>` : ''; 
+            d.innerHTML = `<div class="flex gap-4 ${u ? 'flex-row-reverse' : 'flex-row'} group w-full">${i}<div class="flex flex-col gap-1 ${u ? 'items-end' : 'items-start'} w-full">${b}${a}</div></div>`; l.appendChild(d); initIcons(); scrollToBottom(); 
+        }
         function scrollToBottom() { const v = document.getElementById('chat-viewport'); v.scrollTop = v.scrollHeight; }
         
         function renderSidebar() {
             const container = document.getElementById('sidebar-options');
+            const isC = state.isSidebarCollapsed;
+            // AJUSTE GAP-3 para separar iconos
             container.innerHTML = sidebarItems.map(item => `
-                <button onclick="handleSidebarAction('${item.action}')" class="sidebar-item w-full flex items-center px-3 py-2 rounded-[8px] gap-3 text-black hover:bg-gray-100 transition-all group mb-1 ${item.action === 'moreTools' ? 'bg-gray-50' : ''}">
-                    <i data-lucide="${item.icon}" width="14" height="14" stroke-width="1.2" class="shrink-0 text-black"></i>
-                    <span class="text-[13px] truncate text-black fade-in-fast sidebar-label">${item.label}</span>
+                <button onclick="handleSidebarAction('${item.action}')" class="sidebar-item w-full flex items-center ${isC ? 'justify-center' : 'px-3'} py-1.5 rounded-[8px] gap-3 text-black hover:bg-gray-100 transition-all group mb-1 ${item.action === 'moreTools' ? 'bg-white' : ''} font-dm-sans">
+                    <i data-lucide="${item.icon}" width="14.5" height="14.5" stroke-width="1.2" class="shrink-0 text-black"></i>
+                    <span class="text-[14.7px] truncate text-black fade-in-fast sidebar-label ${isC ? 'hidden' : ''}">${item.label}</span>
                 </button>
             `).join('');
             initIcons();
         }
-        function renderExtras() { const et = [{ icon: 'file-text', label: "Crear documentos", desc: "Word, PDF, textos largos" }, { icon: 'align-left', label: "Resumir contenido", desc: "Sintetizar información clave" }]; const ef = [{ icon: 'message-square', label: "Contexto extendido", desc: "Para charlas largas" }, { icon: 'archive', label: "Memoria de chat", desc: "Recordar datos previos" }]; const ci = (i) => `<button class="w-full flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group text-left"><div class="mt-0.5 text-gray-400 group-hover:text-black transition-colors"><i data-lucide="${i.icon}" width="16" stroke-width="1.5"></i></div><div><div class="text-sm font-semibold text-black leading-tight">${i.label}</div><div class="text-[11px] text-gray-400 font-medium mt-0.5">${i.desc}</div></div></button>`; document.getElementById('extras-tools-list').innerHTML = et.map(ci).join(''); document.getElementById('extras-functions-list').innerHTML = ef.map(ci).join(''); }
+        function renderExtras() { 
+            const et = [{ icon: 'file-text', label: "Crear documentos", desc: "Word, PDF, textos largos" }, { icon: 'align-left', label: "Resumir contenido", desc: "Sintetizar información clave" }]; 
+            const ef = [{ icon: 'message-square', label: "Contexto extendido", desc: "Para charlas largas" }, { icon: 'archive', label: "Memoria de chat", desc: "Recordar datos previos" }]; 
+            const ci = (i) => `<button class="w-full flex items-start gap-3 p-3 rounded-xl hover:bg-gray-200/50 transition-colors group text-left"><div class="mt-0.5 text-gray-500 group-hover:text-black transition-colors"><i data-lucide="${i.icon}" width="16" stroke-width="1.5"></i></div><div><div class="text-sm font-semibold text-black leading-tight">${i.label}</div><div class="text-[11px] text-gray-500 font-medium mt-0.5">${i.desc}</div></div></button>`; 
+            document.getElementById('extras-tools-list').innerHTML = et.map(ci).join(''); document.getElementById('extras-functions-list').innerHTML = ef.map(ci).join(''); 
+        }
         function renderQuickActions() { const q = [{ text: "Imagen creativa", icon: "image" }, { text: "Resumir esto", icon: "align-left" }, { text: "Código Python", icon: "terminal" }, { text: "Plan de viaje", icon: "plane" }]; document.getElementById('quick-actions').innerHTML = q.map(a => `<button onclick="setInput('${a.text}')" class="group px-4 py-2 md:px-5 md:py-3 md:text-sm bg-white hover:bg-gray-50 text-black rounded-full transition-all cursor-pointer flex items-center gap-2 text-xs font-medium border border-gray-200 shadow-sm hover:shadow-md"><i data-lucide="${a.icon}" width="14" height="14" class="text-gray-500 group-hover:text-black"></i><span>${a.text}</span></button>`).join(''); initIcons(); }
-        function renderHistoryItems() { const l = document.getElementById('history-list-content'); let h = ''; for(let i=0; i<5; i++) { h += `<button class="w-full text-left p-3 hover:bg-gray-50 border border-transparent hover:border-gray-100 rounded-xl group transition-all duration-200"><div class="flex justify-between items-start mb-1"><span class="font-semibold text-sm text-black truncate pr-2">Chat ${i+1}</span><span class="text-[10px] text-gray-400">Hoy</span></div><p class="text-xs text-gray-500 truncate">Preview...</p></button>`; } l.innerHTML = h; }
-        function renderTools() { const pl = document.getElementById('pc-tools-list'); pl.innerHTML = toolList.map(t => `<button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-3 text-[13px] text-black transition-colors group"><div class="text-gray-400 group-hover:text-black"><i data-lucide="${t.icon}" width="11"></i></div> ${t.label}</button>`).join(''); const mg = document.getElementById('mobile-tools-grid'); mg.innerHTML = toolList.map(t => `<button class="flex flex-col items-center gap-2 group p-2"><div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-500 group-active:bg-gray-100 transition-colors"><i data-lucide="${t.icon}" width="20"></i></div><span class="text-[10px] text-center font-medium text-gray-600 leading-tight">${t.label}</span></button>`).join(''); initIcons(); }
-        function updateLayout() { const iw = document.getElementById('main-input-wrapper'); const qa = document.getElementById('quick-actions'); const cs = document.getElementById('center-content-spot'); const bs = document.getElementById('bottom-input-spot'); const bb = document.getElementById('bottom-bar-container'); const w = document.getElementById('welcome-screen'); const ml = document.getElementById('messages-list'); if(state.messages.length === 0) { w.classList.remove('hidden'); bb.classList.add('hidden'); ml.classList.add('hidden'); qa.classList.remove('hidden'); cs.innerHTML = ''; if(window.innerWidth < 768) { cs.appendChild(qa); iw.classList.add('mt-5'); iw.classList.remove('w-full'); iw.classList.add('w-full'); cs.appendChild(iw); } else { iw.classList.remove('mt-5'); cs.appendChild(iw); qa.classList.remove('mt-6'); qa.classList.add('mt-6'); cs.appendChild(qa); } } else { bb.classList.remove('hidden'); bs.appendChild(iw); iw.classList.remove('mt-5'); w.classList.add('hidden'); ml.classList.remove('hidden'); qa.classList.add('hidden'); } }
-        function triggerFileSelect(t) { closePlusMenuMobile(); document.getElementById('plus-menu-desktop').classList.add('hidden'); document.querySelector('#btn-plus svg').classList.remove('rotate-45'); state.isPlusMenuOpen = false; document.getElementById('plus-menu-overlay').classList.add('hidden'); if(state.isToolsAttachOpen) toggleState('isToolsAttachOpen', 'tools-attach-menu'); let id = 'file-input-generic'; if(t==='image')id='file-input-image'; if(t==='video')id='file-input-video'; document.getElementById(id).click(); }
+        function renderTools() { const pl = document.getElementById('pc-tools-list'); pl.innerHTML = toolList.map(t => `<button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-3 text-[13px] text-black transition-colors group"><div class="text-gray-400 group-hover:text-black"><i data-lucide="${t.icon}" width="11"></i></div> ${t.label}</button>`).join(''); }
+        function updateLayout() { 
+            const iw = document.getElementById('main-input-wrapper'); 
+            const qa = document.getElementById('quick-actions'); 
+            const cs = document.getElementById('center-content-spot'); 
+            const bs = document.getElementById('bottom-input-spot'); 
+            const bb = document.getElementById('bottom-bar-container'); 
+            const w = document.getElementById('welcome-screen'); 
+            const ml = document.getElementById('messages-list'); 
+            
+            if(state.messages.length === 0) { 
+                w.classList.remove('hidden'); 
+                if(window.innerWidth < 768) { cs.innerHTML = ''; bb.appendChild(iw); qa.classList.add('hidden'); bb.classList.remove('hidden'); } 
+                else { bb.classList.add('hidden'); iw.classList.remove('mt-5'); cs.appendChild(iw); qa.classList.remove('mt-6'); qa.classList.add('mt-6'); cs.appendChild(qa); qa.classList.remove('hidden'); } 
+            } else { 
+                bb.classList.remove('hidden'); 
+                bs.appendChild(iw); 
+                iw.classList.remove('mt-5'); 
+                w.classList.add('hidden'); 
+                ml.classList.remove('hidden'); 
+                qa.classList.add('hidden'); 
+            } 
+        }
+        function triggerFileSelect(t) { closePlusMenuMobile(); document.getElementById('plus-menu-desktop').classList.add('hidden'); state.isPlusMenuOpen = false; if(state.isToolsAttachOpen) toggleState('isToolsAttachOpen', 'tools-attach-menu'); let id = 'file-input-generic'; if(t==='image')id='file-input-image'; if(t==='video')id='file-input-video'; document.getElementById(id).click(); }
         function handleFileSelect(e) { const f = e.target.files[0]; if(!f) return; state.pendingFile = f; showPreview(f); e.target.value = ''; }
-        function triggerGalleryLoad() { document.getElementById('file-input-gallery').click(); }
-        function handleGalleryLoad(e) { const fs = Array.from(e.target.files); if(!fs.length) return; const c = document.getElementById('mobile-gallery-scroll'); while(c.children.length > 1) c.removeChild(c.lastChild); fs.forEach(f => { const r = new FileReader(); r.onload = (ev) => { const b = document.createElement('button'); b.className = "w-12 h-12 rounded-xl bg-gray-100 shrink-0 border border-gray-200 overflow-hidden relative group"; b.onclick = () => { state.pendingFile = f; showPreview(f); }; const i = document.createElement('img'); i.src = ev.target.result; i.className = "w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"; b.appendChild(i); c.appendChild(b); }; r.readAsDataURL(f); }); }
+        function handleGalleryLoad(e) { const fs = Array.from(e.target.files); }
         function showPreview(f) { const m = document.getElementById('preview-modal'); const i = document.getElementById('preview-image'); const c = document.getElementById('preview-file-icon'); const n = document.getElementById('preview-filename'); m.classList.remove('hidden'); m.classList.add('flex'); if(f.type.startsWith('image/')) { const r = new FileReader(); r.onload = (e) => { i.src = e.target.result; i.classList.remove('hidden'); c.classList.add('hidden'); }; r.readAsDataURL(f); } else { i.classList.add('hidden'); c.classList.remove('hidden'); c.classList.add('flex'); n.innerText = f.name; } }
         function closePreview() { document.getElementById('preview-modal').classList.add('hidden'); document.getElementById('preview-modal').classList.remove('flex'); state.pendingFile = null; }
-        function confirmSendFile() { const m = document.getElementById('preview-modal'); m.classList.add('hidden'); m.classList.remove('flex'); const fm = state.pendingFile ? `[Archivo Adjunto: ${state.pendingFile.name}]` : "[Imagen Enviada]"; if(state.messages.length === 0) updateLayout(); state.messages.push({role:'user',content:fm}); addMessage('user', fm); setTimeout(() => { const l = document.getElementById('ai-loader'); l.classList.remove('hidden'); l.classList.add('flex'); scrollToBottom(); setTimeout(() => { l.classList.add('hidden'); l.classList.remove('flex'); addMessage('ai', "He recibido tu archivo correctamente."); }, 1500); }, 500); state.pendingFile = null; }
-        function closePlusMenuMobile() { document.getElementById('plus-menu-mobile').classList.add('hidden'); document.getElementById('plus-menu-overlay').classList.add('hidden'); state.isPlusMenuOpen = false; }
+        
+        function confirmSendFile() { 
+            const m = document.getElementById('preview-modal'); 
+            m.classList.add('hidden'); 
+            m.classList.remove('flex'); 
+            const fm = state.pendingFile ? `[Archivo Adjunto: ${state.pendingFile.name}]` : "[Imagen Enviada]"; 
+            
+            // FIX: Push first, then check layout
+            state.messages.push({role:'user',content:fm}); 
+            if(state.messages.length === 1) updateLayout(); 
+            
+            addMessage('user', fm); 
+            setTimeout(() => { 
+                const l = document.getElementById('ai-loader'); l.classList.remove('hidden'); l.classList.add('flex'); scrollToBottom(); 
+                setTimeout(() => { l.classList.add('hidden'); l.classList.remove('flex'); addMessage('ai', "He recibido tu archivo correctamente."); }, 1500); 
+            }, 500); 
+            state.pendingFile = null; 
+        }
+        
+        function closePlusMenuMobile() { document.getElementById('plus-menu-mobile').classList.add('hidden'); document.getElementById('mobile-overlay').classList.add('hidden'); state.isPlusMenuOpen = false; }
     </script>
 </body>
 </html>
